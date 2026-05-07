@@ -1,5 +1,4 @@
 import Footer from '@/components/footer/footer';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Header } from '@/components/headers/header';
 import { GlowEffect } from '@/components/motion-primitives/glow-effect';

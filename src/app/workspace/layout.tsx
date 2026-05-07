@@ -1,5 +1,4 @@
 'use client';
-import { AppSidebar } from '@/components/app-sidebar/app-sidebar';
 import { WorkspaceHeader } from '@/components/headers/workspaceHeader';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useSidebarStore } from '@/lib/store/sidebar.store';
