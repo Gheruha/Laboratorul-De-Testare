@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -279,18 +279,18 @@ export default function AirportsSimulatorPage() {
               >
                 Sosiri
               </button>
-              <a
+              <Link
                 href="#anunturi"
                 className="hover:text-blue-400 transition-colors"
               >
                 Anunțuri
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#servicii"
                 className="hover:text-blue-400 transition-colors"
               >
                 Servicii
-              </a>
+              </Link>
             </div>
           </div>
         </nav>
@@ -633,29 +633,29 @@ export default function AirportsSimulatorPage() {
             </h4>
             <ul className="text-xs space-y-1">
               <li>
-                <a
+                <Link
                   href="#anunturi"
                   className="hover:text-white transition-colors"
                 >
                   Termeni și Condiții
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="#servicii"
                   className="hover:text-white transition-colors"
                 >
                   Asistență Specială
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="https://alliedtesting.com"
                   target="_blank"
                   className="hover:text-white text-blue-400 transition-colors"
                 >
                   Allied Testing
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
