@@ -3,12 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -29,9 +24,9 @@ interface Flight {
   gate?: string;
   belt?: string;
   status:
-    | 'La timp'
-    | 'Întârziat'
-    | 'Anulat'
+    | 'On Time'
+    | 'Delayed'
+    | 'Cancelled'
     | 'Boarding'
     | 'Departed'
     | 'Landed';
@@ -51,7 +46,7 @@ interface Service {
   program: string;
 }
 
-// 2. Date pentru panoul de Plecări
+// 2. Data for the Departures board
 const departuresData: Flight[] = [
   {
     id: 1,
@@ -81,7 +76,7 @@ const departuresData: Flight[] = [
     time: '11:45',
     terminal: '2',
     gate: 'A01',
-    status: 'La timp',
+    status: 'On Time',
   },
   {
     id: 4,
@@ -91,7 +86,7 @@ const departuresData: Flight[] = [
     time: '14:20',
     terminal: '1',
     gate: 'B05',
-    status: 'Întârziat',
+    status: 'Delayed',
   },
   {
     id: 5,
@@ -101,11 +96,11 @@ const departuresData: Flight[] = [
     time: '18:00',
     terminal: '2',
     gate: '',
-    status: 'Anulat',
+    status: 'Cancelled',
   },
 ];
 
-// 3. Date pentru panoul de Sosiri
+// 3. Data for the Arrivals board
 const arrivalsData: Flight[] = [
   {
     id: 1,
@@ -125,7 +120,7 @@ const arrivalsData: Flight[] = [
     time: '12:10',
     terminal: '1',
     belt: '02',
-    status: 'La timp',
+    status: 'On Time',
   },
   {
     id: 3,
@@ -135,7 +130,7 @@ const arrivalsData: Flight[] = [
     time: '15:35',
     terminal: '2',
     belt: '03',
-    status: 'La timp',
+    status: 'On Time',
   },
   {
     id: 4,
@@ -145,76 +140,76 @@ const arrivalsData: Flight[] = [
     time: '23:55',
     terminal: '1',
     belt: '-',
-    status: 'Întârziat',
+    status: 'Delayed',
   },
 ];
 
-// 5. Secțiunea de anunțuri (Date introduse manual)
+// 5. Announcements section (manually entered data)
 const announcementsData: Announcement[] = [
   {
     id: 1,
-    tip: 'Mentenanță',
+    tip: 'Maintenance',
     mesaj:
-      'Lucrări de mentenanță la Terminalul 2 între orele 13:00 - 15:00. Unele porți pot fi modificate.',
+      'Maintenance work at Terminal 2 between 13:00 - 15:00. Some gates may be changed.',
     ora: '08:00',
   },
   {
     id: 2,
-    tip: 'Meteo',
+    tip: 'Weather',
     mesaj:
-      'Condiții meteo nefavorabile (ceață densă) în regiunea München. Posibile întârzieri la sosiri.',
+      'Unfavorable weather conditions (dense fog) in the Munich region. Possible delays for arrivals.',
     ora: '09:15',
   },
   {
     id: 3,
-    tip: 'Info Bagaje',
+    tip: 'Baggage Info',
     mesaj:
-      'Banda de bagaje nr. 02 de la Terminalul 1 a fost repusă în funcțiune.',
+      'Baggage belt no. 02 at Terminal 1 has been put back into operation.',
     ora: '10:30',
   },
 ];
 
-// 6. Secțiunea de servicii (Date introduse manual)
+// 6. Services section (manually entered data)
 const servicesData: Service[] = [
   {
     id: 1,
     serviciu: 'Business Lounge Match',
-    locatie: 'Terminal 2, Etaj 1',
-    program: 'Non-stop',
+    locatie: 'Terminal 2, Floor 1',
+    program: '24/7',
   },
   {
     id: 2,
-    serviciu: 'Restaurant AeroGourmet',
-    locatie: 'Terminal 1, Zona Plecări',
+    serviciu: 'AeroGourmet Restaurant',
+    locatie: 'Terminal 1, Departures Area',
     program: '06:00 - 23:00',
   },
   {
     id: 3,
-    serviciu: 'Parcare Termen Scurt P1',
-    locatie: 'În fața Terminalului 1',
-    program: 'Non-stop',
+    serviciu: 'Short-Term Parking P1',
+    locatie: 'In front of Terminal 1',
+    program: '24/7',
   },
   {
     id: 4,
-    serviciu: 'Asistență Specială / Info Desk',
-    locatie: 'Terminal 1 & 2, Parter',
-    program: 'Non-stop',
+    serviciu: 'Special Assistance / Info Desk',
+    locatie: 'Terminal 1 & 2, Ground Floor',
+    program: '24/7',
   },
 ];
 
 export default function AirportsSimulatorPage() {
   const [activeTab, setActiveTab] = useState<string>('departures');
   const [searchQuery, setSearchQuery] = useState<string>(' ');
-  const [statusFilter, setStatusFilter] = useState<string>('Toate');
+  const [statusFilter, setStatusFilter] = useState<string>('All');
 
-  // 4. Funcționalitatea de căutare și filtrare
+  // 4. Search and filtering functionality
   const filterFlights = (flights: Flight[]) => {
     return flights.filter(item => {
       const matchesSearch =
         item.flight.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
         item.airline.toLowerCase().includes(searchQuery.toLowerCase().trim());
 
-      if (statusFilter === 'Toate') return matchesSearch;
+      if (statusFilter === 'All') return matchesSearch;
       return matchesSearch && item.status === statusFilter;
     });
   };
@@ -237,18 +232,18 @@ export default function AirportsSimulatorPage() {
             Boarding
           </Badge>
         );
-      case 'Întârziat':
-        return <Badge variant="destructive">Întârziat</Badge>;
-      case 'Anulat':
+      case 'Delayed':
+        return <Badge variant="destructive">Delayed</Badge>;
+      case 'Cancelled':
         return (
           <Badge className="bg-red-900 text-red-200 border border-red-700">
-            Anulat
+            Cancelled
           </Badge>
         );
       default:
         return (
           <Badge variant="outline" className="text-slate-400 border-slate-700">
-            La timp
+            On Time
           </Badge>
         );
     }
@@ -257,12 +252,12 @@ export default function AirportsSimulatorPage() {
   return (
     <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
       <div className="p-4 md:p-8 w-full flex-grow">
-        {/* Bara de Navigare */}
+        {/* Navigation Bar */}
         <nav className="w-full border border-slate-800 bg-slate-900 rounded-xl mb-8 p-4 shadow-lg">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold tracking-tight text-blue-400">
-                ✈️ Aeroportul Internațional{' '}
+                ✈️ International Airport{' '}
                 <span className="text-white">AeroSim</span>
               </span>
             </div>
@@ -271,36 +266,36 @@ export default function AirportsSimulatorPage() {
                 onClick={() => setActiveTab('departures')}
                 className={`hover:text-blue-400 transition-colors ${activeTab === 'departures' ? 'text-blue-400 font-semibold' : ''}`}
               >
-                Plecări
+                Departures
               </button>
               <button
                 onClick={() => setActiveTab('arrivals')}
                 className={`hover:text-blue-400 transition-colors ${activeTab === 'arrivals' ? 'text-blue-400 font-semibold' : ''}`}
               >
-                Sosiri
+                Arrivals
               </button>
               <Link
                 href="#anunturi"
                 className="hover:text-blue-400 transition-colors"
               >
-                Anunțuri
+                Announcements
               </Link>
               <Link
                 href="#servicii"
                 className="hover:text-blue-400 transition-colors"
               >
-                Servicii
+                Services
               </Link>
             </div>
           </div>
         </nav>
 
-        {/* 4. Bara de căutare și filtre */}
+        {/* 4. Search bar and filters */}
         <div className="max-w-7xl mx-auto mb-6 p-4 border border-slate-800 bg-slate-900/50 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="w-full md:max-w-md">
             <input
               type="text"
-              placeholder="Caută după nr. zbor sau companie..."
+              placeholder="Search by flight no. or airline..."
               value={searchQuery === ' ' ? '' : searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
@@ -308,9 +303,9 @@ export default function AirportsSimulatorPage() {
           </div>
           <div className="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
             <span className="text-xs text-slate-400 self-center mr-2">
-              Filtru Status:
+              Status Filter:
             </span>
-            {['Toate', 'La timp', 'Întârziat', 'Anulat'].map(status => (
+            {['All', 'On Time', 'Delayed', 'Cancelled'].map(status => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
@@ -326,7 +321,7 @@ export default function AirportsSimulatorPage() {
           </div>
         </div>
 
-        {/* Panouri principale */}
+        {/* Main panels */}
         <main className="max-w-7xl mx-auto space-y-12">
           <Tabs
             value={activeTab}
@@ -338,22 +333,22 @@ export default function AirportsSimulatorPage() {
                 value="departures"
                 className="data-[state=active]:bg-slate-800 data-[state=active]:text-white"
               >
-                Plecări
+                Departures
               </TabsTrigger>
               <TabsTrigger
                 value="arrivals"
                 className="data-[state=active]:bg-slate-800 data-[state=active]:text-white"
               >
-                Sosiri
+                Arrivals
               </TabsTrigger>
             </TabsList>
 
-            {/* 2. Tabelul de Plecări */}
+            {/* 2. Departures Table */}
             <TabsContent value="departures">
               <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
                 <CardHeader className="border-b border-slate-800 bg-slate-900/50">
                   <CardTitle className="text-xl text-white">
-                    Panoul de Plecări
+                    Departures Board
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -362,22 +357,22 @@ export default function AirportsSimulatorPage() {
                       <TableHeader className="bg-slate-800/40">
                         <TableRow className="border-slate-800">
                           <TableCell className="font-semibold text-slate-300">
-                            Nr. Zbor
+                            Flight No.
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Companie
+                            Airline
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Destinație
+                            Destination
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Ora
+                            Time
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-center">
                             Terminal
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-center">
-                            Poartă
+                            Gate
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-right">
                             Status
@@ -420,7 +415,7 @@ export default function AirportsSimulatorPage() {
                               colSpan={7}
                               className="text-center p-8 text-slate-500"
                             >
-                              Nu s-au găsit zboruri.
+                              No flights found.
                             </TableCell>
                           </TableRow>
                         )}
@@ -431,12 +426,12 @@ export default function AirportsSimulatorPage() {
               </Card>
             </TabsContent>
 
-            {/* 3. Tabelul de Sosiri */}
+            {/* 3. Arrivals Table */}
             <TabsContent value="arrivals">
               <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
                 <CardHeader className="border-b border-slate-800 bg-slate-900/50">
                   <CardTitle className="text-xl text-white">
-                    Panoul de Sosiri
+                    Arrivals Board
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -445,22 +440,22 @@ export default function AirportsSimulatorPage() {
                       <TableHeader className="bg-slate-800/40">
                         <TableRow className="border-slate-800">
                           <TableCell className="font-semibold text-slate-300">
-                            Nr. Zbor
+                            Flight No.
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Companie
+                            Airline
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Origine
+                            Origin
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300">
-                            Ora
+                            Time
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-center">
                             Terminal
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-center">
-                            Bagaje
+                            Baggage
                           </TableCell>
                           <TableCell className="font-semibold text-slate-300 text-right">
                             Status
@@ -503,7 +498,7 @@ export default function AirportsSimulatorPage() {
                               colSpan={7}
                               className="text-center p-8 text-slate-500"
                             >
-                              Nu s-au găsit zboruri.
+                              No flights found.
                             </TableCell>
                           </TableRow>
                         )}
@@ -515,12 +510,12 @@ export default function AirportsSimulatorPage() {
             </TabsContent>
           </Tabs>
 
-          {/* 5. Secțiunea de anunțuri */}
+          {/* 5. Announcements section */}
           <section id="anunturi" className="scroll-mt-6">
             <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
               <CardHeader className="border-b border-slate-800 bg-amber-950/20">
                 <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
-                  📢 Secțiunea de Anunțuri
+                  📢 Announcements Section
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -528,13 +523,13 @@ export default function AirportsSimulatorPage() {
                   <TableHeader className="bg-slate-800/40">
                     <TableRow className="border-slate-800">
                       <TableCell className="font-semibold text-slate-300 w-32">
-                        Tip Anunț
+                        Announcement Type
                       </TableCell>
                       <TableCell className="font-semibold text-slate-300">
-                        Mesaj Informativ
+                        Informational Message
                       </TableCell>
                       <TableCell className="font-semibold text-slate-300 text-right w-24">
-                        Ora
+                        Time
                       </TableCell>
                     </TableRow>
                   </TableHeader>
@@ -566,12 +561,12 @@ export default function AirportsSimulatorPage() {
             </Card>
           </section>
 
-          {/* 6. Secțiunea de servicii */}
+          {/* 6. Services section */}
           <section id="servicii" className="scroll-mt-6">
             <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
               <CardHeader className="border-b border-slate-800 bg-blue-950/20">
                 <CardTitle className="text-xl text-blue-400 flex items-center gap-2">
-                  💼 Secțiunea de Servicii
+                  💼 Services Section
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -579,13 +574,13 @@ export default function AirportsSimulatorPage() {
                   <TableHeader className="bg-slate-800/40">
                     <TableRow className="border-slate-800">
                       <TableCell className="font-semibold text-slate-300">
-                        Serviciu
+                        Service
                       </TableCell>
                       <TableCell className="font-semibold text-slate-300">
-                        Locație
+                        Location
                       </TableCell>
                       <TableCell className="font-semibold text-slate-300 text-right">
-                        Program
+                        Schedule
                       </TableCell>
                     </TableRow>
                   </TableHeader>
@@ -614,30 +609,28 @@ export default function AirportsSimulatorPage() {
         </main>
       </div>
 
-      {/* 7. Subsolul paginii */}
+      {/* 7. Footer */}
       <footer className="w-full border-t border-slate-800 bg-slate-900/60 mt-16 py-8 px-4 md:px-8 text-slate-400 text-sm">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2">
             <h4 className="text-white font-semibold text-base">
-              Contact Aeroport
+              Airport Contact
             </h4>
             <p className="text-xs">
-              📍 Adresă: Str. Aeroportului nr. 1, Chișinău
+              📍 Address: Airport Street no. 1, Chișinău
             </p>
-            <p className="text-xs">📞 Telefon: +373 22 000 000</p>
+            <p className="text-xs">📞 Phone: +373 22 000 000</p>
             <p className="text-xs">✉️ Email: support@aerosim-airport.md</p>
           </div>
           <div className="space-y-2">
-            <h4 className="text-white font-semibold text-base">
-              Linkuri Utile
-            </h4>
+            <h4 className="text-white font-semibold text-base">Useful Links</h4>
             <ul className="text-xs space-y-1">
               <li>
                 <Link
                   href="#anunturi"
                   className="hover:text-white transition-colors"
                 >
-                  Termeni și Condiții
+                  Terms and Conditions
                 </Link>
               </li>
               <li>
@@ -645,7 +638,7 @@ export default function AirportsSimulatorPage() {
                   href="#servicii"
                   className="hover:text-white transition-colors"
                 >
-                  Asistență Specială
+                  Special Assistance
                 </Link>
               </li>
               <li>
@@ -660,10 +653,10 @@ export default function AirportsSimulatorPage() {
             </ul>
           </div>
           <div className="space-y-2 md:text-right">
-            <h4 className="text-white font-semibold text-base">Program</h4>
-            <p className="text-xs">Platformă activă pentru simulări QA.</p>
+            <h4 className="text-white font-semibold text-base">Schedule</h4>
+            <p className="text-xs">Active platform for QA simulations.</p>
             <p className="text-xs text-slate-500 pt-4">
-              © 2026 AeroSim. Toate drepturile rezervate.
+              © 2026 AeroSim. All rights reserved.
             </p>
           </div>
         </div>
