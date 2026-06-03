@@ -53,7 +53,9 @@ export default function SignForm({ mode, onSubmit }: SignFormProps) {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  {...register('email')}
+                  {...register('email', {
+                    setValueAs: (value: string) => value.trim().toLowerCase(),
+                  })}
                   type="text"
                   placeholder="example@yourmail.com"
                 />
@@ -66,7 +68,7 @@ export default function SignForm({ mode, onSubmit }: SignFormProps) {
                 <Input
                   id="password"
                   {...register('password')}
-                  type="text"
+                  type="password"
                   placeholder="At least 8 characters & one capital letter"
                 />
                 {errors.password && (
