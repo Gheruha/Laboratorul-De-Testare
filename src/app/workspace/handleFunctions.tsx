@@ -14,7 +14,8 @@ const isSidebarItemArray = (val: unknown): val is SidebarItemDto[] =>
       typeof (item as SidebarItemDto).item_id === 'string' &&
       typeof (item as SidebarItemDto).item_name === 'string' &&
       typeof (item as SidebarItemDto).item_icon === 'string' &&
-      typeof (item as SidebarItemDto).position === 'number',
+      typeof (item as SidebarItemDto).position === 'number' &&
+      typeof (item as SidebarItemDto).href === 'string',
   );
 
 export function useSidebarData() {

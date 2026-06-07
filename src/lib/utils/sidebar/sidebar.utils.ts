@@ -1,17 +1,25 @@
-import { createSupabaseClientApi } from '@/lib/supabase/client';
 import { SidebarStructureDto } from '@/lib/types/supabase.type';
+import { getPublishedLessons } from '@/lib/utils/lesson/lesson.utils';
 
-// Getting all the sidebar options from db
 export const getDefaultSidebarOptions = async (): Promise<
   SidebarStructureDto[]
 > => {
-  const supabase = await createSupabaseClientApi();
-  const { data, error } = await supabase.rpc('get_sidebar_structure');
-  console.log('Database call happens', data);
-  if (error) {
-    console.error('Error while getting sidebar options', error.message);
-    throw new Error(error.message || 'Failed to get sidebar options');
-  }
+  const lessons = await getPublishedLessons();
 
-  return data ?? [];
+  return [
+    {
+      group_id: 'manual-testing',
+      group_name: 'Manual Testing',
+      icon: 'folder',
+      open_icon: 'folder',
+      position: 1,
+      sidebar_items: lessons.map(lesson => ({
+        item_id: lesson.id,
+        item_name: lesson.title,
+        item_icon: 'file',
+        position: lesson.order_index,
+        href: `/workspace/lessons/${lesson.slug}`,
+      })),
+    },
+  ];
 };

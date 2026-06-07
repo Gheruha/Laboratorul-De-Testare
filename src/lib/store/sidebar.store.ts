@@ -22,7 +22,7 @@ export const useSidebarStore = create<SidebarStore>()(
     (set, get) => ({
       // Default values
       groups: [],
-      openGroupIds: [],
+      openGroupIds: ['manual-testing'],
       isCollapsed: false,
       selectedItemId: null,
 

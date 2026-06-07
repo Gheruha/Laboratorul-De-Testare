@@ -24,6 +24,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      lessons: {
+        Row: {
+          content: Json;
+          created_at: string;
+          description: string | null;
+          id: string;
+          is_published: boolean;
+          language: string;
+          module_id: string;
+          module_number: number;
+          order_index: number;
+          quiz_id: string | null;
+          slug: string;
+          source_language: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          content: Json;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_published?: boolean;
+          language?: string;
+          module_id: string;
+          module_number: number;
+          order_index: number;
+          quiz_id?: string | null;
+          slug: string;
+          source_language?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          content?: Json;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_published?: boolean;
+          language?: string;
+          module_id?: string;
+          module_number?: number;
+          order_index?: number;
+          quiz_id?: string | null;
+          slug?: string;
+          source_language?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       messages: {
         Row: {
           content: string;
