@@ -107,6 +107,87 @@ export type Database = {
           },
         ];
       };
+      quiz_options: {
+        Row: {
+          id: string;
+          is_correct: boolean;
+          label: string;
+          order_index: number;
+          question_id: string;
+        };
+        Insert: {
+          id?: string;
+          is_correct?: boolean;
+          label: string;
+          order_index: number;
+          question_id: string;
+        };
+        Update: {
+          id?: string;
+          is_correct?: boolean;
+          label?: string;
+          order_index?: number;
+          question_id?: string;
+        };
+        Relationships: [];
+      };
+      quiz_questions: {
+        Row: {
+          created_at: string;
+          explanation: string | null;
+          id: string;
+          order_index: number;
+          prompt: string;
+          quiz_id: string;
+          selection_mode: string;
+        };
+        Insert: {
+          created_at?: string;
+          explanation?: string | null;
+          id?: string;
+          order_index: number;
+          prompt: string;
+          quiz_id: string;
+          selection_mode?: string;
+        };
+        Update: {
+          created_at?: string;
+          explanation?: string | null;
+          id?: string;
+          order_index?: number;
+          prompt?: string;
+          quiz_id?: string;
+          selection_mode?: string;
+        };
+        Relationships: [];
+      };
+      quizzes: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_published: boolean;
+          passing_score: number;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          is_published?: boolean;
+          passing_score?: number;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_published?: boolean;
+          passing_score?: number;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       prompts: {
         Row: {
           created_at: string | null;

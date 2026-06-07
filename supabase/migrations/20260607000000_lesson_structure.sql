@@ -107,6 +107,8 @@ create table if not exists public.quiz_questions (
   quiz_id text not null references public.quizzes(id) on delete cascade,
   prompt text not null,
   explanation text,
+  selection_mode text not null default 'single'
+    check (selection_mode in ('single', 'multiple')),
   order_index integer not null check (order_index > 0),
   created_at timestamptz not null default now(),
   unique (quiz_id, order_index)
@@ -120,3 +122,5 @@ create table if not exists public.quiz_options (
   order_index integer not null check (order_index > 0),
   unique (question_id, order_index)
 );
+
+notify pgrst, 'reload schema';

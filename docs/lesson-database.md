@@ -19,6 +19,15 @@ JSON content.
 These additions are included in
 `supabase/migrations/20260607000000_lesson_structure.sql`.
 
+The five English quizzes translated from the Romanian Word document are
+included in:
+
+`supabase/migrations/20260607001000_seed_english_quizzes.sql`
+
+Run the structure migration first, followed by the English quiz seed migration.
+The seed migration is repeatable and replaces the questions and options for
+`quiz-1` through `quiz-5`.
+
 ## Add after authentication
 
 Add a `user_lesson_progress` table containing:

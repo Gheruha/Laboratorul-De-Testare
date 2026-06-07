@@ -46,10 +46,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
       <footer className="space-y-6">
         <div className="flex justify-center">
-          <Button disabled size="lg">
-            <ClipboardCheck />
-            Quiz coming soon
-          </Button>
+          {lesson.quiz_id && (
+            <Button size="lg" asChild>
+              <Link href={`/workspace/quizzes/${lesson.quiz_id}`}>
+                <ClipboardCheck />
+                Start Quiz
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
