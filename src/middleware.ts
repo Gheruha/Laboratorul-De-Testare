@@ -1,48 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseClientMiddleware } from '@/lib/supabase/client';
 
+const copyResponseCookies = (
+  source: NextResponse,
+  destination: NextResponse,
+) => {
+  source.cookies.getAll().forEach(cookie => destination.cookies.set(cookie));
+  return destination;
+};
+
+const clearSupabaseCookies = (req: NextRequest, res: NextResponse) => {
+  req.cookies.getAll().forEach(cookie => {
+    if (cookie.name.startsWith('sb-')) {
+      req.cookies.delete(cookie.name);
+      res.cookies.delete(cookie.name);
+    }
+  });
+};
+
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const supabase = await createSupabaseClientMiddleware(req, res);
 
-  const { data, error } = await supabase.auth.getSession();
-  const session = data?.session;
-
-  if (error) {
-    if (error) {
-      console.error('Error fetching session:', error.message);
-      return NextResponse.json(
-        { message: 'Failed to authenticate' },
-        { status: 500 },
-      );
-    }
-  }
-
-  // Give the user with session access to specific pages
   const { pathname } = req.nextUrl;
   const isPublicRoot = pathname === '/';
   const isAuthRoot = pathname.startsWith('/auth');
   const isDataMateRoot = pathname.startsWith('/datamate');
   const isWorkspace = pathname.startsWith('/workspace');
 
-  // If there is no session
-  if (!session) {
+  // getUser verifies the access token and refreshes it when possible.
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  const isMissingSession = error?.name === 'AuthSessionMissingError';
+
+  if (error && !isMissingSession) {
+    console.warn('Supabase session expired or invalid:', error.message);
+    clearSupabaseCookies(req, res);
+
     if (isPublicRoot || isAuthRoot || isDataMateRoot) {
       return res;
     }
 
-    return NextResponse.redirect(new URL('/', req.url));
+    const authUrl = new URL('/auth', req.url);
+    authUrl.searchParams.set('mode', 'signin');
+    authUrl.searchParams.set('reason', 'session-expired');
+    return copyResponseCookies(res, NextResponse.redirect(authUrl));
   }
 
-  // If there is a session
-  if (session) {
-    if (isWorkspace || isDataMateRoot) {
+  if (!user) {
+    if (isPublicRoot || isAuthRoot || isDataMateRoot) {
       return res;
     }
 
-    if (isAuthRoot) {
-      return NextResponse.redirect(new URL('/workspace', req.url));
-    }
+    const authUrl = new URL('/auth', req.url);
+    authUrl.searchParams.set('mode', 'signin');
+    return copyResponseCookies(res, NextResponse.redirect(authUrl));
+  }
+
+  if (isWorkspace || isDataMateRoot) {
+    return res;
+  }
+
+  if (isAuthRoot) {
+    return copyResponseCookies(
+      res,
+      NextResponse.redirect(new URL('/workspace', req.url)),
+    );
   }
 
   return res;

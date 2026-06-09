@@ -1,12 +1,12 @@
 import { createSupabaseClientServiceRole } from '@/lib/supabase/client';
-import type {
-  Quiz,
-  QuizOption,
-  QuizQuestion,
-  QuizSelectionMode,
-} from '@/lib/types/quiz.type';
+import type { Quiz, QuizQuestion, QuizSelectionMode } from '@/lib/types/quiz.type';
 
-type QuizOptionRow = QuizOption & { question_id: string };
+type QuizOptionRow = {
+  id: string;
+  question_id: string;
+  label: string;
+  order_index: number;
+};
 
 export const getPublishedQuizById = async (
   quizId: string,
@@ -14,7 +14,7 @@ export const getPublishedQuizById = async (
   const supabase = createSupabaseClientServiceRole();
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .select('id, title, passing_score')
+    .select('id, title, passing_score, max_points')
     .eq('id', quizId)
     .eq('is_published', true)
     .maybeSingle();
@@ -63,7 +63,7 @@ export const getPublishedQuizById = async (
   if (questionIds.length > 0) {
     const { data: optionRows, error: optionsError } = await supabase
       .from('quiz_options')
-      .select('id, question_id, label, is_correct, order_index')
+      .select('id, question_id, label, order_index')
       .in('question_id', questionIds)
       .order('order_index', { ascending: true });
 

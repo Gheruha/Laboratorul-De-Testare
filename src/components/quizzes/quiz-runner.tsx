@@ -1,12 +1,35 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, RotateCcw, XCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  History,
+  Loader2,
+  RotateCcw,
+  Star,
+  XCircle,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import type {
+  GamificationStatus,
+  QuizAttempt,
+  QuizAttemptResult,
+  QuizProgress,
+} from '@/lib/types/gamification.type';
 import type { Quiz } from '@/lib/types/quiz.type';
 import { cn } from '@/lib/utils';
 
@@ -18,35 +41,43 @@ const hasExactAnswers = (selected: string[], correct: string[]) =>
 
 export function QuizRunner({ quiz }: { quiz: Quiz }) {
   const [answers, setAnswers] = useState<Answers>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [result, setResult] = useState<QuizAttemptResult | null>(null);
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [progress, setProgress] = useState<QuizProgress | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
   const answeredCount = Object.keys(answers).filter(
     questionId => answers[questionId]?.length,
   ).length;
 
-  const score = useMemo(
-    () =>
-      quiz.questions.reduce((total, question) => {
-        const selected = answers[question.id] ?? [];
-        const correct = question.options
-          .filter(option => option.is_correct)
-          .map(option => option.id);
-        return total + (hasExactAnswers(selected, correct) ? 1 : 0);
-      }, 0),
-    [answers, quiz.questions],
-  );
+  const loadHistory = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/quizzes/${quiz.id}/attempts`, {
+        cache: 'no-store',
+      });
+      if (!response.ok) return;
+      const data = (await response.json()) as {
+        attempts: QuizAttempt[];
+        progress: QuizProgress | null;
+      };
+      setAttempts(data.attempts);
+      setProgress(data.progress);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [quiz.id]);
 
-  const percentage =
-    quiz.questions.length > 0
-      ? Math.round((score / quiz.questions.length) * 100)
-      : 0;
+  useEffect(() => {
+    void loadHistory();
+  }, [loadHistory]);
 
   const selectOption = (
     questionId: string,
     optionId: string,
     mode: 'single' | 'multiple',
   ) => {
-    if (submitted) return;
+    if (result || submitting) return;
 
     setAnswers(current => {
       if (mode === 'single') {
@@ -63,9 +94,42 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
     });
   };
 
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const response = await fetch(`/api/quizzes/${quiz.id}/attempts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      });
+      const data = (await response.json()) as QuizAttemptResult & {
+        message?: string;
+      };
+
+      if (!response.ok) throw new Error(data.message || 'Could not submit quiz');
+
+      setResult(data);
+      window.dispatchEvent(
+        new CustomEvent<GamificationStatus>('gamification-updated', {
+          detail: {
+            totalPoints: data.totalPoints,
+            level: data.level,
+            levelName: data.levelName,
+          },
+        }),
+      );
+      await loadHistory();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Could not submit quiz');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const retry = () => {
     setAnswers({});
-    setSubmitted(false);
+    setResult(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,44 +146,110 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
           <Badge variant="secondary">Manual Testing Quiz</Badge>
           <Badge variant="outline">{quiz.questions.length} questions</Badge>
           <Badge variant="outline">Passing score: {quiz.passing_score}%</Badge>
+          <Badge variant="outline">Up to {quiz.max_points} points</Badge>
         </div>
         <h1 className="text-3xl font-bold md:text-4xl">{quiz.title}</h1>
         <p className="text-muted-foreground">
-          {submitted
+          {result
             ? 'Review your answers and explanations below.'
             : `${answeredCount} of ${quiz.questions.length} questions answered.`}
         </p>
       </header>
 
-      {submitted && (
+      {result && (
         <Card
           className={cn(
             'my-8 gap-3 py-5 shadow-none',
-            percentage >= quiz.passing_score
+            result.scorePercent >= quiz.passing_score
               ? 'border-emerald-500/40 bg-emerald-500/5'
               : 'border-amber-500/40 bg-amber-500/5',
           )}
         >
           <CardHeader>
             <CardTitle>
-              Score: {score}/{quiz.questions.length} ({percentage}%)
+              Score: {result.score}/{result.totalQuestions} ({result.scorePercent}
+              %)
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            {percentage >= quiz.passing_score
-              ? 'You passed this quiz.'
-              : 'Review the explanations and try again when ready.'}
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>
+              {result.scorePercent >= quiz.passing_score
+                ? 'You passed this quiz.'
+                : 'Review the explanations and try again when ready.'}
+            </p>
+            <p className="flex items-center gap-1.5 font-medium text-foreground">
+              <Star className="size-4" />
+              {result.pointsAwarded > 0
+                ? `You earned ${result.pointsAwarded} new points.`
+                : 'No new points this attempt. Your best reward is already saved.'}
+            </p>
           </CardContent>
         </Card>
       )}
 
+      <Card className="my-8 gap-4 py-5 shadow-none">
+        <CardHeader className="flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <History className="size-4" />
+            Recent attempts
+          </CardTitle>
+          {progress && (
+            <Badge variant={progress.completed100 ? 'secondary' : 'outline'}>
+              Best: {progress.bestScorePercent}%
+            </Badge>
+          )}
+        </CardHeader>
+        <CardContent>
+          {historyLoading ? (
+            <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+              <Loader2 className="size-4 animate-spin" />
+              Loading history
+            </div>
+          ) : attempts.length === 0 ? (
+            <p className="py-4 text-sm text-muted-foreground">
+              Your completed attempts will appear here.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Score</TableHead>
+                  <TableHead className="text-right">Points earned</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {attempts.map(attempt => (
+                  <TableRow key={attempt.id}>
+                    <TableCell>
+                      {new Intl.DateTimeFormat(undefined, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      }).format(new Date(attempt.createdAt))}
+                    </TableCell>
+                    <TableCell>
+                      {attempt.score}/{attempt.totalQuestions} ({attempt.scorePercent}
+                      %)
+                    </TableCell>
+                    <TableCell className="text-right">
+                      +{attempt.pointsAwarded}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="my-8 space-y-6">
         {quiz.questions.map((question, questionIndex) => {
           const selected = answers[question.id] ?? [];
-          const correctIds = question.options
-            .filter(option => option.is_correct)
-            .map(option => option.id);
-          const isCorrect = hasExactAnswers(selected, correctIds);
+          const correctIds =
+            result?.correctOptionIdsByQuestion[question.id] ?? [];
+          const isCorrect = result
+            ? hasExactAnswers(selected, correctIds)
+            : false;
 
           return (
             <Card key={question.id} className="gap-4 py-5 shadow-none">
@@ -128,7 +258,7 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
                   <CardTitle className="text-base leading-6">
                     {questionIndex + 1}. {question.prompt}
                   </CardTitle>
-                  {submitted &&
+                  {result &&
                     (isCorrect ? (
                       <CheckCircle2 className="size-5 shrink-0 text-emerald-500" />
                     ) : (
@@ -142,11 +272,12 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
               <CardContent className="space-y-3">
                 {question.options.map((option, optionIndex) => {
                   const isSelected = selected.includes(option.id);
+                  const isCorrectOption = correctIds.includes(option.id);
                   return (
                     <button
                       key={option.id}
                       type="button"
-                      disabled={submitted}
+                      disabled={Boolean(result)}
                       onClick={() =>
                         selectOption(
                           question.id,
@@ -157,13 +288,13 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
                       className={cn(
                         'flex w-full items-start gap-3 rounded-md border p-3 text-left text-sm transition-colors',
                         'hover:bg-accent disabled:cursor-default disabled:opacity-100',
-                        isSelected && !submitted && 'border-primary bg-accent',
-                        submitted &&
-                          option.is_correct &&
+                        isSelected && !result && 'border-primary bg-accent',
+                        result &&
+                          isCorrectOption &&
                           'border-emerald-500/50 bg-emerald-500/10',
-                        submitted &&
+                        result &&
                           isSelected &&
-                          !option.is_correct &&
+                          !isCorrectOption &&
                           'border-destructive/50 bg-destructive/10',
                       )}
                     >
@@ -175,7 +306,7 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
                   );
                 })}
 
-                {submitted && question.explanation && (
+                {result && question.explanation && (
                   <>
                     <Separator className="my-4" />
                     <p className="text-sm leading-6 text-muted-foreground">
@@ -199,19 +330,21 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
             Back to lesson
           </Link>
         </Button>
-        {submitted ? (
+        {result ? (
           <Button onClick={retry}>
             <RotateCcw />
             Try Again
           </Button>
         ) : (
           <Button
-            onClick={() => setSubmitted(true)}
+            onClick={submit}
             disabled={
+              submitting ||
               answeredCount !== quiz.questions.length ||
               quiz.questions.length === 0
             }
           >
+            {submitting ? <Loader2 className="animate-spin" /> : null}
             Submit Answers
           </Button>
         )}

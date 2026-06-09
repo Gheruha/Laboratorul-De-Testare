@@ -9,6 +9,123 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_simulator_defects: {
+        Row: {
+          created_at: string;
+          evaluation_criteria: string;
+          feedback_correct: string;
+          id: string;
+          is_active: boolean;
+          scenario_id: string;
+          title: string;
+        };
+        Insert: {
+          created_at?: string;
+          evaluation_criteria: string;
+          feedback_correct: string;
+          id: string;
+          is_active?: boolean;
+          scenario_id: string;
+          title: string;
+        };
+        Update: {
+          created_at?: string;
+          evaluation_criteria?: string;
+          feedback_correct?: string;
+          id?: string;
+          is_active?: boolean;
+          scenario_id?: string;
+          title?: string;
+        };
+        Relationships: [];
+      };
+      ai_simulator_scenarios: {
+        Row: {
+          created_at: string;
+          id: string;
+          instructions: string;
+          is_published: boolean;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          instructions: string;
+          is_published?: boolean;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          instructions?: string;
+          is_published?: boolean;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ai_simulator_submissions: {
+        Row: {
+          created_at: string;
+          feedback: string;
+          id: string;
+          matched_defect_id: string | null;
+          report: string;
+          scenario_id: string;
+          session_id: string;
+          user_id: string | null;
+          verdict: string;
+        };
+        Insert: {
+          created_at?: string;
+          feedback: string;
+          id?: string;
+          matched_defect_id?: string | null;
+          report: string;
+          scenario_id: string;
+          session_id: string;
+          user_id?: string | null;
+          verdict: string;
+        };
+        Update: {
+          created_at?: string;
+          feedback?: string;
+          id?: string;
+          matched_defect_id?: string | null;
+          report?: string;
+          scenario_id?: string;
+          session_id?: string;
+          user_id?: string | null;
+          verdict?: string;
+        };
+        Relationships: [];
+      };
+      ai_simulator_tasks: {
+        Row: {
+          description: string;
+          id: string;
+          order_index: number;
+          scenario_id: string;
+          title: string;
+        };
+        Insert: {
+          description: string;
+          id: string;
+          order_index: number;
+          scenario_id: string;
+          title: string;
+        };
+        Update: {
+          description?: string;
+          id?: string;
+          order_index?: number;
+          scenario_id?: string;
+          title?: string;
+        };
+        Relationships: [];
+      };
       conversations: {
         Row: {
           created_at: string | null;
@@ -166,6 +283,7 @@ export type Database = {
           created_at: string;
           id: string;
           is_published: boolean;
+          max_points: number;
           passing_score: number;
           title: string;
           updated_at: string;
@@ -174,6 +292,7 @@ export type Database = {
           created_at?: string;
           id: string;
           is_published?: boolean;
+          max_points?: number;
           passing_score?: number;
           title: string;
           updated_at?: string;
@@ -182,9 +301,97 @@ export type Database = {
           created_at?: string;
           id?: string;
           is_published?: boolean;
+          max_points?: number;
           passing_score?: number;
           title?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      quiz_attempts: {
+        Row: {
+          created_at: string;
+          id: string;
+          points_awarded: number;
+          quiz_id: string;
+          score: number;
+          score_percent: number;
+          total_questions: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          points_awarded?: number;
+          quiz_id: string;
+          score: number;
+          score_percent: number;
+          total_questions: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          points_awarded?: number;
+          quiz_id?: string;
+          score?: number;
+          score_percent?: number;
+          total_questions?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      user_gamification: {
+        Row: {
+          level: number;
+          level_name: string;
+          total_points: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          level?: number;
+          level_name?: string;
+          total_points?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          level?: number;
+          level_name?: string;
+          total_points?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      user_quiz_progress: {
+        Row: {
+          attempt_count: number;
+          best_score_percent: number;
+          completed_100: boolean;
+          points_earned: number;
+          quiz_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          best_score_percent?: number;
+          completed_100?: boolean;
+          points_earned?: number;
+          quiz_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempt_count?: number;
+          best_score_percent?: number;
+          completed_100?: boolean;
+          points_earned?: number;
+          quiz_id?: string;
+          updated_at?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -292,6 +499,15 @@ export type Database = {
           position: number;
           sidebar_items: Json;
         }[];
+      };
+      record_quiz_attempt: {
+        Args: {
+          p_quiz_id: string;
+          p_score: number;
+          p_total_questions: number;
+          p_user_id: string;
+        };
+        Returns: Json;
       };
     };
     Enums: {

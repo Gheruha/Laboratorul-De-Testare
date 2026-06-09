@@ -3,7 +3,6 @@ export type QuizSelectionMode = 'single' | 'multiple';
 export interface QuizOption {
   id: string;
   label: string;
-  is_correct: boolean;
   order_index: number;
 }
 
@@ -20,6 +19,7 @@ export interface Quiz {
   id: string;
   title: string;
   passing_score: number;
+  max_points: number;
   lesson_slug: string;
   questions: QuizQuestion[];
 }

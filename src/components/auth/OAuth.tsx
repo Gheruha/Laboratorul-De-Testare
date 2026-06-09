@@ -1,26 +1,26 @@
 'use client';
 
-import React from 'react';
-import { ThemeImage } from '../theme/theme-image';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { signInWithGoogleHandler } from '@/app/auth/handleFunctions';
 
 export const OAuth = () => {
   return (
-    <div className="w-full flex justify-center pt-10">
+    <div className="mx-auto mt-4 w-full max-w-sm">
       <Button
+        type="button"
         variant="outline"
-        className="border rounded-full w-16 h-16"
+        className="relative w-full"
         onClick={signInWithGoogleHandler}
       >
-        <ThemeImage
-          lightSrc="/icons/google.png"
-          darkSrc="/icons/google.png"
-          alt="icon"
-          className="w-8 h-8"
-          width={32}
-          height={32}
+        <Image
+          src="/icons/google.png"
+          alt=""
+          className="absolute left-3 size-4 object-contain"
+          width={16}
+          height={16}
         />
+        Continue with Google
       </Button>
     </div>
   );

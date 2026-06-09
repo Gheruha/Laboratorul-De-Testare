@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { AirportSimulatorAssistant } from '@/components/simulator/airport-simulator-assistant';
 
 interface Flight {
   id: number;
@@ -90,12 +91,12 @@ const departuresData: Flight[] = [
   },
   {
     id: 5,
-    flight: 'W6 3755',
+    flight: 'W6 3711',
     airline: 'Wizz Air',
     destination: 'Bologna',
     time: '18:00',
     terminal: '2',
-    gate: '',
+    gate: 'A09',
     status: 'Cancelled',
   },
 ];
@@ -109,7 +110,7 @@ const arrivalsData: Flight[] = [
     origin: 'Bucharest OTP',
     time: '08:45',
     terminal: '1',
-    belt: '01',
+    belt: '-',
     status: 'Landed',
   },
   {
@@ -163,8 +164,7 @@ const announcementsData: Announcement[] = [
   {
     id: 3,
     tip: 'Baggage Info',
-    mesaj:
-      'Baggage belt no. 02 at Terminal 1 has been put back into operation.',
+    mesaj: 'Baggage belt no. 02 at Terminal 1 is currently out of service.',
     ora: '10:30',
   },
 ];
@@ -181,7 +181,7 @@ const servicesData: Service[] = [
     id: 2,
     serviciu: 'AeroGourmet Restaurant',
     locatie: 'Terminal 1, Departures Area',
-    program: '06:00 - 23:00',
+    program: '26:00 - 29:00',
   },
   {
     id: 3,
@@ -290,12 +290,14 @@ export default function AirportsSimulatorPage() {
           </div>
         </nav>
 
+        <AirportSimulatorAssistant />
+
         {/* 4. Search bar and filters */}
         <div className="max-w-7xl mx-auto mb-6 p-4 border border-slate-800 bg-slate-900/50 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="w-full md:max-w-md">
             <input
               type="text"
-              placeholder="Search by flight no. or airline..."
+              placeholder="Search by flight no., airline, or city..."
               value={searchQuery === ' ' ? '' : searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"

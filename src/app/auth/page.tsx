@@ -14,7 +14,6 @@ const AuthPage = () => {
       ? authModeParam
       : 'signin';
 
-  console.log(authMode);
   return (
     <>
       <SignForm

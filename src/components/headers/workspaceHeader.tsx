@@ -7,6 +7,7 @@ import { Button } from '../ui/button';
 import { authService } from '@/lib/services/api/auth.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { GamificationStatusDisplay } from '@/components/gamification/gamification-status';
 
 export function WorkspaceHeader() {
   const router = useRouter();
@@ -32,7 +33,8 @@ export function WorkspaceHeader() {
           <FlaskConical />
         </Link>
       </div>
-      <div className="flex space-x-2">
+      <div className="flex items-center gap-2">
+        <GamificationStatusDisplay />
         <ThemeToggle />
         <Button variant={'outline'} onClick={handleSignOut}>
           Sign Out
