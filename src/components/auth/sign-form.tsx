@@ -14,6 +14,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { SubmitHandler } from 'react-hook-form';
 import { SignDto } from '@/lib/types/auth.type';
+import { CenteredLoader } from '@/components/loading/centered-loader';
 export type AuthMode = 'signup' | 'signin';
 
 interface SignFormProps {
@@ -36,59 +37,75 @@ export default function SignForm({ mode, onSubmit }: SignFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useSignForm();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="mx-auto max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="grid gap-4 items-start">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  {...register('email', {
-                    setValueAs: (value: string) => value.trim().toLowerCase(),
-                  })}
-                  type="text"
-                  placeholder="example@yourmail.com"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
+    <>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Card className="mx-auto max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-xl">{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid gap-4 items-start">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    {...register('email', {
+                      setValueAs: (value: string) => value.trim().toLowerCase(),
+                    })}
+                    type="text"
+                    placeholder="example@yourmail.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    {...register('password')}
+                    type="password"
+                    placeholder="At least 8 characters & one capital letter"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {buttonText}
+                </Button>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  {...register('password')}
-                  type="password"
-                  placeholder="At least 8 characters & one capital letter"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
+              <div className="mt-4 text-center text-sm">
+                <Link href={link} className="underline">
+                  {linkMessage}
+                </Link>
               </div>
-              <Button type="submit" className="w-full">
-                {buttonText}
-              </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              <Link href={link} className="underline">
-                {linkMessage}
-              </Link>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+          </CardContent>
+        </Card>
+      </form>
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 bg-background/75 backdrop-blur-sm">
+          <CenteredLoader
+            label={isSignUp ? 'Creating your account' : 'Signing you in'}
+            className="min-h-screen"
+          />
+        </div>
+      )}
+    </>
   );
 }

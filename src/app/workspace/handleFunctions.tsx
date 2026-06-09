@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { sidebarService } from '@/lib/services/api/sidebar.api';
 import { SidebarGroup, SidebarItemDto } from '@/lib/types/sidebar.type';
 import { SidebarStructureDto } from '@/lib/types/supabase.type';
@@ -21,6 +21,7 @@ const isSidebarItemArray = (val: unknown): val is SidebarItemDto[] =>
 export function useSidebarData() {
   const groups = useSidebarStore(s => s.groups);
   const setGroups = useSidebarStore(s => s.setGroups);
+  const [isLoading, setIsLoading] = useState(groups.length === 0);
 
   useEffect(() => {
     (async () => {
@@ -42,9 +43,11 @@ export function useSidebarData() {
         setGroups(mapped);
       } catch (e) {
         console.error('Failed to load sidebar:', e);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, [setGroups]);
 
-  return groups;
+  return { groups, isLoading };
 }

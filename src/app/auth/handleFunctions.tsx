@@ -28,7 +28,8 @@ export function useAuthHandlers() {
           </div>
         ),
       });
-      setTimeout(() => router.push('/workspace'), 1500);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      router.push('/workspace');
     } catch (e) {
       handleError(e);
     }
@@ -45,7 +46,8 @@ export function useAuthHandlers() {
           </div>
         ),
       });
-      setTimeout(() => router.push('/workspace'), 1500);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      router.push('/workspace');
     } catch (e) {
       handleError(e);
     }
