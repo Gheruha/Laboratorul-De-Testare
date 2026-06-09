@@ -365,6 +365,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_daily_activity: {
+        Row: {
+          activity_date: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          activity_date?: string;
+          created_at?: string;
+          user_id: string;
+        };
+        Update: {
+          activity_date?: string;
+          created_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      user_streaks: {
+        Row: {
+          current_streak: number;
+          last_activity_date: string | null;
+          longest_streak: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          current_streak?: number;
+          last_activity_date?: string | null;
+          longest_streak?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          current_streak?: number;
+          last_activity_date?: string | null;
+          longest_streak?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_quiz_progress: {
         Row: {
           attempt_count: number;
@@ -507,6 +549,10 @@ export type Database = {
           p_total_questions: number;
           p_user_id: string;
         };
+        Returns: Json;
+      };
+      record_daily_activity: {
+        Args: { p_user_id: string };
         Returns: Json;
       };
     };

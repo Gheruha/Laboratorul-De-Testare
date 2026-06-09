@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { ThemeToggle } from '../theme/theme.toggler';
-import { FlaskConical } from 'lucide-react';
+import { FlaskConical, LogOut, UserRound } from 'lucide-react';
 import { Button } from '../ui/button';
 import { authService } from '@/lib/services/api/auth.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { GamificationStatusDisplay } from '@/components/gamification/gamification-status';
+import { StreakStatusDisplay } from '@/components/account/streak-status';
 
 export function WorkspaceHeader() {
   const router = useRouter();
@@ -35,9 +36,29 @@ export function WorkspaceHeader() {
       </div>
       <div className="flex items-center gap-2">
         <GamificationStatusDisplay />
+        <StreakStatusDisplay />
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full"
+          aria-label="Open account"
+          title="Account"
+          asChild
+        >
+          <Link href="/workspace/account">
+            <UserRound />
+          </Link>
+        </Button>
         <ThemeToggle />
-        <Button variant={'outline'} onClick={handleSignOut}>
-          Sign Out
+        <Button
+          variant="outline"
+          className="px-2 sm:px-4"
+          aria-label="Sign out"
+          title="Sign out"
+          onClick={handleSignOut}
+        >
+          <LogOut />
+          <span className="hidden sm:inline">Sign Out</span>
         </Button>
       </div>
     </header>

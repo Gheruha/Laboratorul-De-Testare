@@ -35,7 +35,7 @@ export function GamificationStatusDisplay() {
 
   return (
     <div className="flex items-center gap-1.5" aria-label="Your quiz progress">
-      <Badge variant="secondary" className="h-8 gap-1.5">
+      <Badge variant="secondary" className="hidden h-8 gap-1.5 sm:inline-flex">
         <Award className="size-3.5" />
         <span className="hidden sm:inline">{status.levelName}</span>
         <span>Lv. {status.level}</span>
