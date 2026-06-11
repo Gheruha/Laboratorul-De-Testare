@@ -386,6 +386,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_follows: {
+        Row: {
+          created_at: string;
+          follower_id: string;
+          following_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          follower_id: string;
+          following_id: string;
+        };
+        Update: {
+          created_at?: string;
+          follower_id?: string;
+          following_id?: string;
+        };
+        Relationships: [];
+      };
+      user_profiles: {
+        Row: {
+          avatar_url: string | null;
+          created_at: string;
+          display_name: string;
+          email: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name: string;
+          email: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name?: string;
+          email?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_streaks: {
         Row: {
           current_streak: number;

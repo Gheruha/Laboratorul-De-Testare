@@ -135,6 +135,10 @@ export async function GET() {
         profile: {
           email: user.email ?? '',
           displayName: metadataName,
+          avatarUrl:
+            user.user_metadata?.avatar_url ??
+            user.user_metadata?.picture ??
+            null,
         },
         gamification: {
           totalPoints: gamificationResult.data?.total_points ?? 0,

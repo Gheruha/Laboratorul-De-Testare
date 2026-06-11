@@ -27,6 +27,7 @@ export interface AccountDashboardData {
   profile: {
     email: string;
     displayName: string;
+    avatarUrl: string | null;
   };
   gamification: GamificationStatus;
   streak: StreakStatus;

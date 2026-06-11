@@ -35,6 +35,7 @@ import {
   ChartTooltip,
   type ChartConfig,
 } from '@/components/ui/chart';
+import { SocialDirectory } from '@/components/account/social-directory';
 
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat(undefined, {
@@ -151,8 +152,18 @@ export function AccountDashboard() {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 px-5 py-8 md:px-8">
       <section className="flex flex-col gap-5 border-b pb-8 sm:flex-row sm:items-center">
-        <div className="flex size-20 shrink-0 items-center justify-center rounded-full border bg-muted">
-          <UserRound className="size-10 text-muted-foreground" />
+        <div
+          className="flex size-20 shrink-0 items-center justify-center rounded-full border bg-muted bg-cover bg-center"
+          style={
+            data.profile.avatarUrl
+              ? { backgroundImage: `url("${data.profile.avatarUrl}")` }
+              : undefined
+          }
+          aria-label={`${data.profile.displayName} profile picture`}
+        >
+          {!data.profile.avatarUrl && (
+            <UserRound className="size-10 text-muted-foreground" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-2xl font-bold">
@@ -174,6 +185,7 @@ export function AccountDashboard() {
               <Flame className="fill-orange-500 text-orange-500" />
               {data.streak.currentStreak} day streak
             </Badge>
+            <SocialDirectory />
           </div>
         </div>
       </section>
