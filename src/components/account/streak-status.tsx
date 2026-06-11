@@ -8,6 +8,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { StreakStatus } from '@/lib/types/account.type';
 import { cn } from '@/lib/utils';
 
@@ -52,59 +57,69 @@ export function StreakStatusDisplay() {
   }, [streak.activeDates]);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1 px-2"
-          aria-label={`${streak.currentStreak} day streak`}
-        >
-          <Flame
-            className={cn(
-              'size-5',
-              streak.currentStreak > 0
-                ? 'fill-orange-500 text-orange-500'
-                : 'text-muted-foreground',
-            )}
-          />
-          <span className="font-semibold">{streak.currentStreak}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 p-4">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <p className="font-semibold">{streak.currentStreak} day streak</p>
-            <p className="text-xs text-muted-foreground">
-              Longest streak: {streak.longestStreak} days
-            </p>
-          </div>
-          <Flame className="size-7 fill-orange-500 text-orange-500" />
-        </div>
-        <p className="mb-3 text-sm font-medium">{calendar.label}</p>
-        <div className="grid grid-cols-7 gap-1 text-center text-xs">
-          {'SMTWTFS'.split('').map((day, index) => (
-            <span key={`${day}-${index}`} className="py-1 text-muted-foreground">
-              {day}
-            </span>
-          ))}
-          {Array.from({ length: calendar.leadingDays }, (_, index) => (
-            <span key={`empty-${index}`} />
-          ))}
-          {calendar.days.map(day => (
-            <span
-              key={day.number}
-              className={cn(
-                'flex aspect-square items-center justify-center rounded-sm',
-                day.active && 'bg-blue-600 font-semibold text-white',
-                day.today && !day.active && 'border border-blue-500 text-blue-600',
-              )}
+    <Tooltip>
+      <DropdownMenu>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1 px-2"
+              aria-label={`${streak.currentStreak} day streak`}
             >
-              {day.number}
-            </span>
-          ))}
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <Flame
+                className={cn(
+                  'size-5',
+                  streak.currentStreak > 0
+                    ? 'fill-orange-500 text-orange-500'
+                    : 'text-muted-foreground',
+                )}
+              />
+              <span className="font-semibold">{streak.currentStreak}</span>
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Daily streak</TooltipContent>
+        <DropdownMenuContent align="end" className="w-72 p-4">
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-semibold">{streak.currentStreak} day streak</p>
+              <p className="text-xs text-muted-foreground">
+                Longest streak: {streak.longestStreak} days
+              </p>
+            </div>
+            <Flame className="size-7 fill-orange-500 text-orange-500" />
+          </div>
+          <p className="mb-3 text-sm font-medium">{calendar.label}</p>
+          <div className="grid grid-cols-7 gap-1 text-center text-xs">
+            {'SMTWTFS'.split('').map((day, index) => (
+              <span
+                key={`${day}-${index}`}
+                className="py-1 text-muted-foreground"
+              >
+                {day}
+              </span>
+            ))}
+            {Array.from({ length: calendar.leadingDays }, (_, index) => (
+              <span key={`empty-${index}`} />
+            ))}
+            {calendar.days.map(day => (
+              <span
+                key={day.number}
+                className={cn(
+                  'flex aspect-square items-center justify-center rounded-sm',
+                  day.active && 'bg-blue-600 font-semibold text-white',
+                  day.today &&
+                    !day.active &&
+                    'border border-blue-500 text-blue-600',
+                )}
+              >
+                {day.number}
+              </span>
+            ))}
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </Tooltip>
   );
 }

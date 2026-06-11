@@ -2,8 +2,13 @@
 
 import Link from 'next/link';
 import { ThemeToggle } from '../theme/theme.toggler';
-import { FlaskConical, LogOut, UserRound } from 'lucide-react';
+import { FlaskConical, Hammer, LogOut, UserRound } from 'lucide-react';
 import { Button } from '../ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { authService } from '@/lib/services/api/auth.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -30,25 +35,50 @@ export function WorkspaceHeader() {
   return (
     <header className="fixed top-0 w-full flex items-center justify-between px-4 py-2 border-b border-border bg-white dark:bg-zinc-950 z-50">
       <div>
-        <Link href="/">
-          <FlaskConical />
-        </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href="/" aria-label="Open home page">
+              <FlaskConical />
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>Home</TooltipContent>
+        </Tooltip>
       </div>
       <div className="flex items-center gap-2">
         <GamificationStatusDisplay />
         <StreakStatusDisplay />
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full"
-          aria-label="Open account"
-          title="Account"
-          asChild
-        >
-          <Link href="/workspace/account">
-            <UserRound />
-          </Link>
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              aria-label="Open workspace"
+              asChild
+            >
+              <Link href="/workspace">
+                <Hammer />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Workspace</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              aria-label="Open account"
+              asChild
+            >
+              <Link href="/workspace/account">
+                <UserRound />
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Account</TooltipContent>
+        </Tooltip>
         <ThemeToggle />
         <Button
           variant="outline"
