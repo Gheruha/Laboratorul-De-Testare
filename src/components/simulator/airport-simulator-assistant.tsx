@@ -334,3 +334,13 @@ export function HospitalSimulatorAssistant() {
     />
   );
 }
+
+export function BankingSimulatorAssistant() {
+  return (
+    <SimulatorAssistant
+      endpoint="banking"
+      storagePrefix="banking-simulator"
+      simulatorName="online banking portal"
+    />
+  );
+}

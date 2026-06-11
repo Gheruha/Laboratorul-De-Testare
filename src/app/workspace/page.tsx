@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Hospital, Landmark, Plane } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -26,7 +27,8 @@ export default function WorkspacePage() {
         <Card className="border-blue-200 bg-blue-50/70 text-foreground shadow-sm transition-colors hover:border-blue-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold text-blue-950 dark:text-white">
-              🛫 Airports Simulator
+              <Plane className="size-5" />
+              Airports Simulator
             </CardTitle>
             <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
               Test flight data, search, services, and airport operations.
@@ -45,7 +47,8 @@ export default function WorkspacePage() {
         <Card className="border-emerald-200 bg-emerald-50/70 text-foreground shadow-sm transition-colors hover:border-emerald-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold text-emerald-950 dark:text-white">
-              🏥 Hospital Simulator
+              <Hospital className="size-5" />
+              Hospital Simulator
             </CardTitle>
             <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
               Test doctor directories, appointments, and patient contact flows.
@@ -55,6 +58,26 @@ export default function WorkspacePage() {
             <Link
               href="/simHospital"
               className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 md:text-sm"
+            >
+              Open simulator
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="border-cyan-200 bg-cyan-50/70 text-foreground shadow-sm transition-colors hover:border-cyan-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold text-cyan-950 dark:text-white">
+              <Landmark className="size-5" />
+              Banking Simulator
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
+              Test balances, transactions, transfers, cards, and payments.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/simBanking"
+              className="inline-flex items-center justify-center rounded-md bg-cyan-700 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-cyan-800 md:text-sm"
             >
               Open simulator
             </Link>
