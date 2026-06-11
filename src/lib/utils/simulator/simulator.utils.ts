@@ -267,7 +267,8 @@ ${defects
   if (!outputText) {
     return {
       verdict: 'out_of_scope',
-      feedback: 'Please submit only a defect you observed in the simulator.',
+      feedback:
+        'This submission cannot be evaluated as an airport defect. Describe one behavior you observed and explain why it is incorrect.',
       matchedDefectId: null,
     };
   }
@@ -295,7 +296,7 @@ ${defects
       verdict === 'correct' && matchedDefect
         ? matchedDefect.feedback_correct
         : verdict === 'out_of_scope'
-          ? 'Please submit only one defect observed in the airport simulator.'
+          ? 'This submission cannot be evaluated as an airport defect. Describe one behavior you observed and explain why it is incorrect.'
           : 'That report does not clearly describe a confirmed defect. Re-check the observed behavior and explain why it is inconsistent.',
     matchedDefectId,
   };

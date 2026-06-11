@@ -106,7 +106,8 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
         message?: string;
       };
 
-      if (!response.ok) throw new Error(data.message || 'Could not submit quiz');
+      if (!response.ok)
+        throw new Error(data.message || 'Could not submit quiz');
 
       setResult(data);
       window.dispatchEvent(
@@ -121,7 +122,9 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
       await loadHistory();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : 'Could not submit quiz');
+      toast.error(
+        error instanceof Error ? error.message : 'Could not submit quiz',
+      );
     } finally {
       setSubmitting(false);
     }
@@ -167,7 +170,8 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
         >
           <CardHeader>
             <CardTitle>
-              Score: {result.score}/{result.totalQuestions} ({result.scorePercent}
+              Score: {result.score}/{result.totalQuestions} (
+              {result.scorePercent}
               %)
             </CardTitle>
           </CardHeader>
@@ -210,34 +214,36 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
               Your completed attempts will appear here.
             </p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead className="text-right">Points earned</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {attempts.map(attempt => (
-                  <TableRow key={attempt.id}>
-                    <TableCell>
-                      {new Intl.DateTimeFormat(undefined, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      }).format(new Date(attempt.createdAt))}
-                    </TableCell>
-                    <TableCell>
-                      {attempt.score}/{attempt.totalQuestions} ({attempt.scorePercent}
-                      %)
-                    </TableCell>
-                    <TableCell className="text-right">
-                      +{attempt.pointsAwarded}
-                    </TableCell>
+            <div className="max-h-[min(18rem,45vh)] overflow-y-auto overscroll-contain rounded-md border">
+              <Table className="min-w-[34rem]">
+                <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Score</TableHead>
+                    <TableHead className="text-right">Points earned</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {attempts.map(attempt => (
+                    <TableRow key={attempt.id}>
+                      <TableCell>
+                        {new Intl.DateTimeFormat(undefined, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short',
+                        }).format(new Date(attempt.createdAt))}
+                      </TableCell>
+                      <TableCell>
+                        {attempt.score}/{attempt.totalQuestions} (
+                        {attempt.scorePercent}%)
+                      </TableCell>
+                      <TableCell className="text-right">
+                        +{attempt.pointsAwarded}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

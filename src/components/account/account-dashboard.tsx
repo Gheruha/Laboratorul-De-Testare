@@ -114,11 +114,14 @@ export function AccountDashboard() {
         const body = (await response.json()) as AccountDashboardData & {
           message?: string;
         };
-        if (!response.ok) throw new Error(body.message || 'Failed to load account');
+        if (!response.ok)
+          throw new Error(body.message || 'Failed to load account');
         setData(body);
       } catch (loadError: unknown) {
         setError(
-          loadError instanceof Error ? loadError.message : 'Failed to load account',
+          loadError instanceof Error
+            ? loadError.message
+            : 'Failed to load account',
         );
       }
     })();
@@ -128,7 +131,9 @@ export function AccountDashboard() {
     return (
       <div className="mx-auto max-w-6xl p-6">
         <Card className="border-destructive/40 shadow-none">
-          <CardContent className="text-sm text-destructive">{error}</CardContent>
+          <CardContent className="text-sm text-destructive">
+            {error}
+          </CardContent>
         </Card>
       </div>
     );
@@ -150,7 +155,9 @@ export function AccountDashboard() {
           <UserRound className="size-10 text-muted-foreground" />
         </div>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-bold">{data.profile.displayName}</h1>
+          <h1 className="truncate text-2xl font-bold">
+            {data.profile.displayName}
+          </h1>
           <p className="truncate text-sm text-muted-foreground">
             {data.profile.email}
           </p>
@@ -218,55 +225,57 @@ export function AccountDashboard() {
           </p>
         </div>
         <Card className="overflow-hidden py-0 shadow-none">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Quiz</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead className="text-right">Points</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.quizHistory.length === 0 ? (
+          <div className="max-h-[min(28rem,60vh)] overflow-y-auto overscroll-contain">
+            <Table className="min-w-[42rem]">
+              <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
                 <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    No quiz attempts yet.
-                  </TableCell>
+                  <TableHead>Quiz</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Score</TableHead>
+                  <TableHead className="text-right">Points</TableHead>
                 </TableRow>
-              ) : (
-                data.quizHistory.map(attempt => (
-                  <TableRow key={attempt.id}>
-                    <TableCell>
-                      <Button variant="link" className="h-auto p-0" asChild>
-                        <Link href={`/workspace/quizzes/${attempt.quizId}`}>
-                          {attempt.quizTitle}
-                        </Link>
-                      </Button>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {formatDate(attempt.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          attempt.passed
-                            ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                            : 'border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-400',
-                        )}
-                      >
-                        {attempt.scorePercent}%
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      +{attempt.pointsAwarded}
+              </TableHeader>
+              <TableBody>
+                {data.quizHistory.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      No quiz attempts yet.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  data.quizHistory.map(attempt => (
+                    <TableRow key={attempt.id}>
+                      <TableCell>
+                        <Button variant="link" className="h-auto p-0" asChild>
+                          <Link href={`/workspace/quizzes/${attempt.quizId}`}>
+                            {attempt.quizTitle}
+                          </Link>
+                        </Button>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatDate(attempt.createdAt)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            attempt.passed
+                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                              : 'border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-400',
+                          )}
+                        >
+                          {attempt.scorePercent}%
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        +{attempt.pointsAwarded}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </Card>
       </section>
 
@@ -277,7 +286,7 @@ export function AccountDashboard() {
             Your latest evaluated defect reports.
           </p>
         </div>
-        <div className="space-y-3">
+        <div className="max-h-[min(36rem,65vh)] space-y-3 overflow-y-auto overscroll-contain pr-1 sm:pr-2">
           {data.simulatorHistory.length === 0 ? (
             <Card className="shadow-none">
               <CardContent className="text-sm text-muted-foreground">
@@ -287,12 +296,14 @@ export function AccountDashboard() {
           ) : (
             data.simulatorHistory.map(submission => (
               <Card key={submission.id} className="gap-3 py-5 shadow-none">
-                <CardHeader className="flex-row items-start justify-between gap-4">
+                <CardHeader className="flex-col items-start justify-between gap-3 sm:flex-row">
                   <div>
                     <CardTitle className="text-base">
                       {submission.scenarioTitle}
                     </CardTitle>
-                    <CardDescription>{formatDate(submission.createdAt)}</CardDescription>
+                    <CardDescription>
+                      {formatDate(submission.createdAt)}
+                    </CardDescription>
                   </div>
                   <Badge
                     variant={

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { AirportSimulatorAssistant } from '@/components/simulator/airport-simulator-assistant';
+import { WorkspaceHeader } from '@/components/headers/workspaceHeader';
 
 interface Flight {
   id: number;
@@ -221,7 +222,7 @@ export default function AirportsSimulatorPage() {
         return (
           <Badge
             variant="secondary"
-            className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+            className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
           >
             Landed / Departed
           </Badge>
@@ -236,13 +237,16 @@ export default function AirportsSimulatorPage() {
         return <Badge variant="destructive">Delayed</Badge>;
       case 'Cancelled':
         return (
-          <Badge className="bg-red-900 text-red-200 border border-red-700">
+          <Badge className="border border-red-300 bg-red-100 text-red-700 dark:border-red-700 dark:bg-red-900 dark:text-red-200">
             Cancelled
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline" className="text-slate-400 border-slate-700">
+          <Badge
+            variant="outline"
+            className="border-blue-300 text-slate-600 dark:border-slate-700 dark:text-slate-400"
+          >
             On Time
           </Badge>
         );
@@ -250,39 +254,40 @@ export default function AirportsSimulatorPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
+    <div className="flex min-h-screen w-full flex-col justify-between bg-sky-50/60 pt-14 font-sans text-foreground dark:bg-slate-950 dark:text-slate-100">
+      <WorkspaceHeader />
       <div className="p-4 md:p-8 w-full flex-grow">
         {/* Navigation Bar */}
-        <nav className="w-full border border-slate-800 bg-slate-900 rounded-xl mb-8 p-4 shadow-lg">
+        <nav className="w-full border border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl mb-8 p-4 shadow-lg">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold tracking-tight text-blue-400">
+              <span className="text-lg font-bold tracking-tight text-blue-600 dark:text-blue-400">
                 ✈️ International Airport{' '}
-                <span className="text-white">AeroSim</span>
+                <span className="text-slate-950 dark:text-white">AeroSim</span>
               </span>
             </div>
-            <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+            <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-400">
               <button
                 onClick={() => setActiveTab('departures')}
-                className={`hover:text-blue-400 transition-colors ${activeTab === 'departures' ? 'text-blue-400 font-semibold' : ''}`}
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${activeTab === 'departures' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''}`}
               >
                 Departures
               </button>
               <button
                 onClick={() => setActiveTab('arrivals')}
-                className={`hover:text-blue-400 transition-colors ${activeTab === 'arrivals' ? 'text-blue-400 font-semibold' : ''}`}
+                className={`transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${activeTab === 'arrivals' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''}`}
               >
                 Arrivals
               </button>
               <Link
                 href="#anunturi"
-                className="hover:text-blue-400 transition-colors"
+                className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Announcements
               </Link>
               <Link
                 href="#servicii"
-                className="hover:text-blue-400 transition-colors"
+                className="transition-colors hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Services
               </Link>
@@ -293,18 +298,18 @@ export default function AirportsSimulatorPage() {
         <AirportSimulatorAssistant />
 
         {/* 4. Search bar and filters */}
-        <div className="max-w-7xl mx-auto mb-6 p-4 border border-slate-800 bg-slate-900/50 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="max-w-7xl mx-auto mb-6 p-4 border border-blue-200 dark:border-slate-800 bg-blue-50/70 dark:bg-slate-900/50 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="w-full md:max-w-md">
             <input
               type="text"
               placeholder="Search by flight no., airline, or city..."
               value={searchQuery === ' ' ? '' : searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-white dark:bg-slate-950 border border-blue-200 dark:border-slate-800 rounded-lg px-4 py-2 text-sm text-foreground dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
           <div className="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
-            <span className="text-xs text-slate-400 self-center mr-2">
+            <span className="text-xs text-slate-600 dark:text-slate-400 self-center mr-2">
               Status Filter:
             </span>
             {['All', 'On Time', 'Delayed', 'Cancelled'].map(status => (
@@ -314,7 +319,7 @@ export default function AirportsSimulatorPage() {
                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                   statusFilter === status
                     ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                    : 'bg-blue-100 text-slate-600 hover:bg-blue-200 hover:text-slate-950 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white'
                 }`}
               >
                 {status}
@@ -330,16 +335,16 @@ export default function AirportsSimulatorPage() {
             onValueChange={setActiveTab}
             className="w-full space-y-6"
           >
-            <TabsList className="grid w-full max-w-xs grid-cols-2 bg-slate-900 border border-slate-800 text-slate-400">
+            <TabsList className="grid w-full max-w-xs grid-cols-2 bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
               <TabsTrigger
                 value="departures"
-                className="data-[state=active]:bg-slate-800 data-[state=active]:text-white"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:bg-blue-500"
               >
                 Departures
               </TabsTrigger>
               <TabsTrigger
                 value="arrivals"
-                className="data-[state=active]:bg-slate-800 data-[state=active]:text-white"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white dark:data-[state=active]:bg-blue-500"
               >
                 Arrivals
               </TabsTrigger>
@@ -347,36 +352,36 @@ export default function AirportsSimulatorPage() {
 
             {/* 2. Departures Table */}
             <TabsContent value="departures">
-              <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
-                <CardHeader className="border-b border-slate-800 bg-slate-900/50">
-                  <CardTitle className="text-xl text-white">
+              <Card className="border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground dark:text-slate-100 shadow-xl overflow-hidden">
+                <CardHeader className="border-b border-blue-200 dark:border-slate-800 bg-blue-50/70 dark:bg-slate-900/50">
+                  <CardTitle className="text-xl text-slate-950 dark:text-white">
                     Departures Board
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <Table>
-                      <TableHeader className="bg-slate-800/40">
-                        <TableRow className="border-slate-800">
-                          <TableCell className="font-semibold text-slate-300">
+                      <TableHeader className="bg-blue-50 dark:bg-slate-800/40">
+                        <TableRow className="border-blue-200 dark:border-slate-800">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Flight No.
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Airline
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Destination
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Time
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-center">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-center">
                             Terminal
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-center">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-center">
                             Gate
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-right">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-right">
                             Status
                           </TableCell>
                         </TableRow>
@@ -386,24 +391,24 @@ export default function AirportsSimulatorPage() {
                           filterFlights(departuresData).map(flight => (
                             <TableRow
                               key={flight.id}
-                              className="border-slate-800 hover:bg-slate-800/30 transition-colors"
+                              className="border-blue-200 dark:border-slate-800 hover:bg-blue-50/80 dark:hover:bg-slate-800/30 transition-colors"
                             >
-                              <TableCell className="font-mono font-bold text-blue-400">
+                              <TableCell className="font-mono font-bold text-blue-600 dark:text-blue-400">
                                 {flight.flight}
                               </TableCell>
-                              <TableCell className="text-slate-300">
+                              <TableCell className="text-slate-700 dark:text-slate-300">
                                 {flight.airline}
                               </TableCell>
-                              <TableCell className="font-semibold text-white">
+                              <TableCell className="font-semibold text-slate-950 dark:text-white">
                                 {flight.destination}
                               </TableCell>
-                              <TableCell className="font-mono text-amber-400">
+                              <TableCell className="font-mono text-amber-600 dark:text-amber-400">
                                 {flight.time}
                               </TableCell>
-                              <TableCell className="text-center text-slate-300">
+                              <TableCell className="text-center text-slate-700 dark:text-slate-300">
                                 {flight.terminal}
                               </TableCell>
-                              <TableCell className="text-center font-semibold text-slate-200">
+                              <TableCell className="text-center font-semibold text-slate-800 dark:text-slate-200">
                                 {flight.gate || '-'}
                               </TableCell>
                               <TableCell className="text-right">
@@ -412,7 +417,7 @@ export default function AirportsSimulatorPage() {
                             </TableRow>
                           ))
                         ) : (
-                          <TableRow className="border-slate-800">
+                          <TableRow className="border-blue-200 dark:border-slate-800">
                             <TableCell
                               colSpan={7}
                               className="text-center p-8 text-slate-500"
@@ -430,36 +435,36 @@ export default function AirportsSimulatorPage() {
 
             {/* 3. Arrivals Table */}
             <TabsContent value="arrivals">
-              <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
-                <CardHeader className="border-b border-slate-800 bg-slate-900/50">
-                  <CardTitle className="text-xl text-white">
+              <Card className="border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground dark:text-slate-100 shadow-xl overflow-hidden">
+                <CardHeader className="border-b border-blue-200 dark:border-slate-800 bg-blue-50/70 dark:bg-slate-900/50">
+                  <CardTitle className="text-xl text-slate-950 dark:text-white">
                     Arrivals Board
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <Table>
-                      <TableHeader className="bg-slate-800/40">
-                        <TableRow className="border-slate-800">
-                          <TableCell className="font-semibold text-slate-300">
+                      <TableHeader className="bg-blue-50 dark:bg-slate-800/40">
+                        <TableRow className="border-blue-200 dark:border-slate-800">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Flight No.
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Airline
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Origin
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                             Time
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-center">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-center">
                             Terminal
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-center">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-center">
                             Baggage
                           </TableCell>
-                          <TableCell className="font-semibold text-slate-300 text-right">
+                          <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-right">
                             Status
                           </TableCell>
                         </TableRow>
@@ -469,21 +474,21 @@ export default function AirportsSimulatorPage() {
                           filterFlights(arrivalsData).map(flight => (
                             <TableRow
                               key={flight.id}
-                              className="border-slate-800 hover:bg-slate-800/30 transition-colors"
+                              className="border-blue-200 dark:border-slate-800 hover:bg-blue-50/80 dark:hover:bg-slate-800/30 transition-colors"
                             >
-                              <TableCell className="font-mono font-bold text-blue-400">
+                              <TableCell className="font-mono font-bold text-blue-600 dark:text-blue-400">
                                 {flight.flight}
                               </TableCell>
-                              <TableCell className="text-slate-300">
+                              <TableCell className="text-slate-700 dark:text-slate-300">
                                 {flight.airline}
                               </TableCell>
-                              <TableCell className="font-semibold text-white">
+                              <TableCell className="font-semibold text-slate-950 dark:text-white">
                                 {flight.origin}
                               </TableCell>
-                              <TableCell className="font-mono text-amber-400">
+                              <TableCell className="font-mono text-amber-600 dark:text-amber-400">
                                 {flight.time}
                               </TableCell>
-                              <TableCell className="text-center text-slate-300">
+                              <TableCell className="text-center text-slate-700 dark:text-slate-300">
                                 {flight.terminal}
                               </TableCell>
                               <TableCell className="text-center font-semibold text-amber-500">
@@ -495,7 +500,7 @@ export default function AirportsSimulatorPage() {
                             </TableRow>
                           ))
                         ) : (
-                          <TableRow className="border-slate-800">
+                          <TableRow className="border-blue-200 dark:border-slate-800">
                             <TableCell
                               colSpan={7}
                               className="text-center p-8 text-slate-500"
@@ -513,24 +518,24 @@ export default function AirportsSimulatorPage() {
           </Tabs>
 
           {/* 5. Announcements section */}
-          <section id="anunturi" className="scroll-mt-6">
-            <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
-              <CardHeader className="border-b border-slate-800 bg-amber-950/20">
-                <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+          <section id="anunturi" className="scroll-mt-20">
+            <Card className="border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground dark:text-slate-100 shadow-xl overflow-hidden">
+              <CardHeader className="border-b border-blue-200 bg-amber-50 dark:border-slate-800 dark:bg-amber-950/20">
+                <CardTitle className="text-xl text-amber-600 dark:text-amber-400 flex items-center gap-2">
                   📢 Announcements Section
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
-                  <TableHeader className="bg-slate-800/40">
-                    <TableRow className="border-slate-800">
-                      <TableCell className="font-semibold text-slate-300 w-32">
+                  <TableHeader className="bg-blue-50 dark:bg-slate-800/40">
+                    <TableRow className="border-blue-200 dark:border-slate-800">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300 w-32">
                         Announcement Type
                       </TableCell>
-                      <TableCell className="font-semibold text-slate-300">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                         Informational Message
                       </TableCell>
-                      <TableCell className="font-semibold text-slate-300 text-right w-24">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-right w-24">
                         Time
                       </TableCell>
                     </TableRow>
@@ -539,20 +544,20 @@ export default function AirportsSimulatorPage() {
                     {announcementsData.map(ann => (
                       <TableRow
                         key={ann.id}
-                        className="border-slate-800 hover:bg-slate-800/20"
+                        className="border-blue-200 dark:border-slate-800 hover:bg-blue-50/80 dark:hover:bg-slate-800/20"
                       >
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className="text-amber-400 border-amber-500/30 bg-amber-500/5"
+                            className="text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/5"
                           >
                             {ann.tip}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-slate-300 text-sm">
+                        <TableCell className="text-slate-700 dark:text-slate-300 text-sm">
                           {ann.mesaj}
                         </TableCell>
-                        <TableCell className="text-right font-mono text-slate-400 text-sm">
+                        <TableCell className="text-right font-mono text-slate-600 dark:text-slate-400 text-sm">
                           {ann.ora}
                         </TableCell>
                       </TableRow>
@@ -564,24 +569,24 @@ export default function AirportsSimulatorPage() {
           </section>
 
           {/* 6. Services section */}
-          <section id="servicii" className="scroll-mt-6">
-            <Card className="border-slate-800 bg-slate-900 text-slate-100 shadow-xl overflow-hidden">
-              <CardHeader className="border-b border-slate-800 bg-blue-950/20">
-                <CardTitle className="text-xl text-blue-400 flex items-center gap-2">
+          <section id="servicii" className="scroll-mt-20">
+            <Card className="border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground dark:text-slate-100 shadow-xl overflow-hidden">
+              <CardHeader className="border-b border-blue-200 bg-blue-50 dark:border-slate-800 dark:bg-blue-950/20">
+                <CardTitle className="text-xl text-blue-600 dark:text-blue-400 flex items-center gap-2">
                   💼 Services Section
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
-                  <TableHeader className="bg-slate-800/40">
-                    <TableRow className="border-slate-800">
-                      <TableCell className="font-semibold text-slate-300">
+                  <TableHeader className="bg-blue-50 dark:bg-slate-800/40">
+                    <TableRow className="border-blue-200 dark:border-slate-800">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                         Service
                       </TableCell>
-                      <TableCell className="font-semibold text-slate-300">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300">
                         Location
                       </TableCell>
-                      <TableCell className="font-semibold text-slate-300 text-right">
+                      <TableCell className="font-semibold text-slate-700 dark:text-slate-300 text-right">
                         Schedule
                       </TableCell>
                     </TableRow>
@@ -590,15 +595,15 @@ export default function AirportsSimulatorPage() {
                     {servicesData.map(service => (
                       <TableRow
                         key={service.id}
-                        className="border-slate-800 hover:bg-slate-800/20"
+                        className="border-blue-200 dark:border-slate-800 hover:bg-blue-50/80 dark:hover:bg-slate-800/20"
                       >
-                        <TableCell className="font-medium text-white">
+                        <TableCell className="font-medium text-slate-950 dark:text-white">
                           {service.serviciu}
                         </TableCell>
-                        <TableCell className="text-slate-300 text-sm">
+                        <TableCell className="text-slate-700 dark:text-slate-300 text-sm">
                           {service.locatie}
                         </TableCell>
-                        <TableCell className="text-right text-slate-400 font-mono text-sm">
+                        <TableCell className="text-right text-slate-600 dark:text-slate-400 font-mono text-sm">
                           {service.program}
                         </TableCell>
                       </TableRow>
@@ -612,10 +617,10 @@ export default function AirportsSimulatorPage() {
       </div>
 
       {/* 7. Footer */}
-      <footer className="w-full border-t border-slate-800 bg-slate-900/60 mt-16 py-8 px-4 md:px-8 text-slate-400 text-sm">
+      <footer className="w-full border-t border-blue-200 dark:border-slate-800 bg-blue-50/80 dark:bg-slate-900/60 mt-16 py-8 px-4 md:px-8 text-slate-600 dark:text-slate-400 text-sm">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2">
-            <h4 className="text-white font-semibold text-base">
+            <h4 className="text-slate-950 dark:text-white font-semibold text-base">
               Airport Contact
             </h4>
             <p className="text-xs">
@@ -625,12 +630,14 @@ export default function AirportsSimulatorPage() {
             <p className="text-xs">✉️ Email: support@aerosim-airport.md</p>
           </div>
           <div className="space-y-2">
-            <h4 className="text-white font-semibold text-base">Useful Links</h4>
+            <h4 className="text-slate-950 dark:text-white font-semibold text-base">
+              Useful Links
+            </h4>
             <ul className="text-xs space-y-1">
               <li>
                 <Link
                   href="#anunturi"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-slate-950 dark:hover:text-white"
                 >
                   Terms and Conditions
                 </Link>
@@ -638,7 +645,7 @@ export default function AirportsSimulatorPage() {
               <li>
                 <Link
                   href="#servicii"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors hover:text-slate-950 dark:hover:text-white"
                 >
                   Special Assistance
                 </Link>
@@ -647,7 +654,7 @@ export default function AirportsSimulatorPage() {
                 <Link
                   href="https://alliedtesting.com"
                   target="_blank"
-                  className="hover:text-white text-blue-400 transition-colors"
+                  className="text-blue-600 transition-colors hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   Allied Testing
                 </Link>
@@ -655,7 +662,9 @@ export default function AirportsSimulatorPage() {
             </ul>
           </div>
           <div className="space-y-2 md:text-right">
-            <h4 className="text-white font-semibold text-base">Schedule</h4>
+            <h4 className="text-slate-950 dark:text-white font-semibold text-base">
+              Schedule
+            </h4>
             <p className="text-xs">Active platform for QA simulations.</p>
             <p className="text-xs text-slate-500 pt-4">
               © 2026 AeroSim. All rights reserved.

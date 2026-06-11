@@ -31,6 +31,12 @@ import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'airport-simulator-confirmed-defects';
 
+const verdictLabels = {
+  correct: 'Correct',
+  incorrect: 'Incorrect',
+  out_of_scope: 'Invalid submission',
+} as const;
+
 export function AirportSimulatorAssistant() {
   const [tasks, setTasks] = useState<SimulatorTask[]>([]);
   const [sessionId, setSessionId] = useState('');
@@ -128,14 +134,14 @@ export function AirportSimulatorAssistant() {
 
   return (
     <>
-      <Card className="mx-auto mb-6 max-w-7xl gap-4 border-slate-800 bg-slate-900 py-5 text-slate-100 shadow-none">
+      <Card className="mx-auto mb-6 max-w-7xl gap-4 border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-5 text-foreground dark:text-slate-100 shadow-none">
         <CardHeader className="flex-row items-start justify-between gap-4">
           <div className="space-y-2">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <ClipboardList className="size-5 text-blue-400" />
+              <ClipboardList className="size-5 text-blue-600 dark:text-blue-400" />
               Testing Mission
             </CardTitle>
-            <p className="max-w-2xl text-sm leading-6 text-slate-400">
+            <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               Inspect the airport experience and report one defect at a time.
               Describe what you observed and why it is incorrect. The evaluator
               will not provide hints or reveal hidden defects.
@@ -146,7 +152,7 @@ export function AirportSimulatorAssistant() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-slate-300 hover:bg-slate-800 hover:text-white"
+                className="text-slate-700 hover:bg-blue-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 onClick={() => {
                   setConfirmedDefects([]);
                   window.localStorage.removeItem(STORAGE_KEY);
@@ -156,14 +162,16 @@ export function AirportSimulatorAssistant() {
                 Reset
               </Button>
             )}
-            <Badge className="bg-blue-500/15 text-blue-300">
+            <Badge className="bg-blue-500/15 text-blue-700 dark:text-blue-300">
               {confirmedDefects.length}/{tasks.length || 6} confirmed
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
           {loadError ? (
-            <p className="text-sm text-red-300">{loadError}</p>
+            <p className="text-sm text-red-700 dark:text-red-300">
+              {loadError}
+            </p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {tasks.map(task => {
@@ -172,20 +180,20 @@ export function AirportSimulatorAssistant() {
                   <div
                     key={task.id}
                     className={cn(
-                      'flex min-h-24 items-start gap-3 rounded-md border border-slate-800 bg-slate-950/50 p-3',
+                      'flex min-h-24 items-start gap-3 rounded-md border border-blue-200 dark:border-slate-800 bg-blue-50/70 dark:bg-slate-950/50 p-3',
                       completed && 'border-emerald-500/40 bg-emerald-500/5',
                     )}
                   >
                     {completed ? (
-                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400" />
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                     ) : (
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-sm border border-slate-700 text-xs text-slate-400">
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-sm border border-blue-300 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-400">
                         {task.order_index}
                       </span>
                     )}
                     <div>
                       <p className="text-sm font-medium">{task.title}</p>
-                      <p className="mt-1 text-xs leading-5 text-slate-400">
+                      <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
                         {task.description}
                       </p>
                     </div>
@@ -199,7 +207,10 @@ export function AirportSimulatorAssistant() {
 
       <Sheet>
         <SheetTrigger asChild>
-          <Button size="lg" className="fixed right-5 bottom-5 z-40 shadow-xl">
+          <Button
+            size="lg"
+            className="fixed right-5 bottom-5 z-40 bg-blue-600 text-white shadow-xl hover:bg-blue-700"
+          >
             <Bot />
             Report a defect
           </Button>
@@ -251,7 +262,7 @@ export function AirportSimulatorAssistant() {
                     ) : (
                       <XCircle className="size-4 text-destructive" />
                     )}
-                    {evaluation.verdict.replace('_', ' ')}
+                    {verdictLabels[evaluation.verdict]}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 text-sm leading-6 text-muted-foreground">
