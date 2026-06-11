@@ -22,24 +22,45 @@ export default function WorkspacePage() {
         </p>
       </div>
 
-      <Card className="border-blue-200 bg-blue-50/70 text-foreground shadow-sm transition-colors hover:border-blue-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-blue-950 dark:text-white">
-            🛫 Airports Simulator
-          </CardTitle>
-          <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
-            Airport website simulation platform. Analyze logic errors.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link
-            href="/simAirport"
-            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 md:text-sm"
-          >
-            To simulation ➔
-          </Link>
-        </CardContent>
-      </Card>
+      <div className="mx-auto grid w-full max-w-2xl gap-4">
+        <Card className="border-blue-200 bg-blue-50/70 text-foreground shadow-sm transition-colors hover:border-blue-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold text-blue-950 dark:text-white">
+              🛫 Airports Simulator
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
+              Test flight data, search, services, and airport operations.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/simAirport"
+              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 md:text-sm"
+            >
+              Open simulator
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="border-emerald-200 bg-emerald-50/70 text-foreground shadow-sm transition-colors hover:border-emerald-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-100 dark:hover:border-zinc-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold text-emerald-950 dark:text-white">
+              🏥 Hospital Simulator
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-600 dark:text-zinc-400 md:text-sm">
+              Test doctor directories, appointments, and patient contact flows.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              href="/simHospital"
+              className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 md:text-sm"
+            >
+              Open simulator
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

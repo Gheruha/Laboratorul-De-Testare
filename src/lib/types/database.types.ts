@@ -45,6 +45,7 @@ export type Database = {
           id: string;
           instructions: string;
           is_published: boolean;
+          max_points: number;
           title: string;
           updated_at: string;
         };
@@ -53,6 +54,7 @@ export type Database = {
           id: string;
           instructions: string;
           is_published?: boolean;
+          max_points?: number;
           title: string;
           updated_at?: string;
         };
@@ -61,6 +63,7 @@ export type Database = {
           id?: string;
           instructions?: string;
           is_published?: boolean;
+          max_points?: number;
           title?: string;
           updated_at?: string;
         };
@@ -407,6 +410,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_simulator_progress: {
+        Row: {
+          completed: boolean;
+          points_earned: number;
+          scenario_id: string;
+          solved_defects: number;
+          total_defects: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          completed?: boolean;
+          points_earned?: number;
+          scenario_id: string;
+          solved_defects?: number;
+          total_defects?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          completed?: boolean;
+          points_earned?: number;
+          scenario_id?: string;
+          solved_defects?: number;
+          total_defects?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       user_quiz_progress: {
         Row: {
           attempt_count: number;
@@ -554,6 +587,14 @@ export type Database = {
       record_daily_activity: {
         Args: { p_user_id: string };
         Returns: Json;
+      };
+      record_simulator_progress: {
+        Args: { p_scenario_id: string; p_user_id: string };
+        Returns: Json;
+      };
+      refresh_user_gamification: {
+        Args: { p_user_id: string };
+        Returns: Database['public']['Tables']['user_gamification']['Row'];
       };
     };
     Enums: {

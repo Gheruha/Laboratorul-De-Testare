@@ -35,12 +35,17 @@ export interface AccountDashboardData {
     passed: number;
     successRate: number;
     perfectQuizzes: number;
+    totalQuizzes: number;
+    completionRate: number;
   };
   simulatorStats: {
     submissions: number;
     correct: number;
     successRate: number;
     solvedDefects: number;
+    completedSimulators: number;
+    totalSimulators: number;
+    completionRate: number;
   };
   quizHistory: AccountQuizAttempt[];
   simulatorHistory: AccountSimulatorSubmission[];

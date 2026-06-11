@@ -1,6 +1,7 @@
 import { createSupabaseClientServiceRole } from '@/lib/supabase/client';
 import type {
   SimulatorEvaluationResponse,
+  SimulatorProgress,
   SimulatorTask,
   SimulatorVerdict,
 } from '@/lib/types/simulator.type';
@@ -62,7 +63,7 @@ export const validateSimulatorReport = (
   if (blockedPatterns.some(pattern => pattern.test(report))) {
     return {
       valid: false,
-      message: 'Only submit a defect observed in the airport simulator.',
+      message: 'Only submit a defect observed in the current simulator.',
     };
   }
 
@@ -143,8 +144,19 @@ const saveSubmission = async ({
   });
 
   if (error) {
-    console.error('Failed to save simulator submission:', error.message);
+    throw new Error('Failed to save simulator submission.');
   }
+
+  const { data: progress, error: progressError } = await supabase.rpc(
+    'record_simulator_progress',
+    {
+      p_user_id: userId,
+      p_scenario_id: scenarioId,
+    },
+  );
+
+  if (progressError) throw progressError;
+  return progress;
 };
 
 export const assertSimulatorRateLimit = async (userId: string) => {
@@ -265,11 +277,22 @@ ${defects
   const outputText = extractOutputText(data);
 
   if (!outputText) {
-    return {
+    const evaluation: SimulatorEvaluationResponse = {
       verdict: 'out_of_scope',
       feedback:
-        'This submission cannot be evaluated as an airport defect. Describe one behavior you observed and explain why it is incorrect.',
+        'This submission cannot be evaluated as a simulator defect. Describe one behavior you observed and explain why it is incorrect.',
       matchedDefectId: null,
+    };
+    const progress = await saveSubmission({
+      scenarioId,
+      sessionId,
+      userId,
+      report,
+      evaluation,
+    });
+    return {
+      ...evaluation,
+      progress: progress as unknown as SimulatorProgress,
     };
   }
 
@@ -296,11 +319,17 @@ ${defects
       verdict === 'correct' && matchedDefect
         ? matchedDefect.feedback_correct
         : verdict === 'out_of_scope'
-          ? 'This submission cannot be evaluated as an airport defect. Describe one behavior you observed and explain why it is incorrect.'
+          ? 'This submission cannot be evaluated as a simulator defect. Describe one behavior you observed and explain why it is incorrect.'
           : 'That report does not clearly describe a confirmed defect. Re-check the observed behavior and explain why it is inconsistent.',
     matchedDefectId,
   };
 
-  await saveSubmission({ scenarioId, sessionId, userId, report, evaluation });
-  return evaluation;
+  const progress = await saveSubmission({
+    scenarioId,
+    sessionId,
+    userId,
+    report,
+    evaluation,
+  });
+  return { ...evaluation, progress: progress as unknown as SimulatorProgress };
 };

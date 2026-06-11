@@ -28,8 +28,7 @@ import type {
   SimulatorTask,
 } from '@/lib/types/simulator.type';
 import { cn } from '@/lib/utils';
-
-const STORAGE_KEY = 'airport-simulator-confirmed-defects';
+import type { GamificationStatus } from '@/lib/types/gamification.type';
 
 const verdictLabels = {
   correct: 'Correct',
@@ -37,7 +36,17 @@ const verdictLabels = {
   out_of_scope: 'Invalid submission',
 } as const;
 
-export function AirportSimulatorAssistant() {
+interface SimulatorAssistantProps {
+  endpoint: string;
+  storagePrefix: string;
+  simulatorName: string;
+}
+
+export function SimulatorAssistant({
+  endpoint,
+  storagePrefix,
+  simulatorName,
+}: SimulatorAssistantProps) {
   const [tasks, setTasks] = useState<SimulatorTask[]>([]);
   const [sessionId, setSessionId] = useState('');
   const [confirmedDefects, setConfirmedDefects] = useState<string[]>([]);
@@ -49,27 +58,29 @@ export function AirportSimulatorAssistant() {
 
   useEffect(() => {
     const storedSessionId = window.localStorage.getItem(
-      'airport-simulator-session-id',
+      `${storagePrefix}-session-id`,
     );
     const currentSessionId = storedSessionId ?? crypto.randomUUID();
     window.localStorage.setItem(
-      'airport-simulator-session-id',
+      `${storagePrefix}-session-id`,
       currentSessionId,
     );
     setSessionId(currentSessionId);
 
-    const saved = window.localStorage.getItem(STORAGE_KEY);
+    const saved = window.localStorage.getItem(
+      `${storagePrefix}-confirmed-defects`,
+    );
     if (saved) {
       try {
         setConfirmedDefects(JSON.parse(saved) as string[]);
       } catch {
-        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(`${storagePrefix}-confirmed-defects`);
       }
     }
 
     void (async () => {
       try {
-        const response = await fetch('/api/simulator/airport/tasks', {
+        const response = await fetch(`/api/simulator/${endpoint}/tasks`, {
           cache: 'no-store',
         });
         const data = (await response.json()) as {
@@ -86,14 +97,14 @@ export function AirportSimulatorAssistant() {
         );
       }
     })();
-  }, []);
+  }, [endpoint, storagePrefix]);
 
   const submitReport = async () => {
     setLoading(true);
     setEvaluation(null);
 
     try {
-      const response = await fetch('/api/simulator/airport/evaluate', {
+      const response = await fetch(`/api/simulator/${endpoint}/evaluate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ report, sessionId }),
@@ -115,8 +126,23 @@ export function AirportSimulatorAssistant() {
       ) {
         const updated = [...confirmedDefects, data.matchedDefectId];
         setConfirmedDefects(updated);
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        window.localStorage.setItem(
+          `${storagePrefix}-confirmed-defects`,
+          JSON.stringify(updated),
+        );
         setReport('');
+      }
+
+      if (data.progress) {
+        window.dispatchEvent(
+          new CustomEvent<GamificationStatus>('gamification-updated', {
+            detail: {
+              totalPoints: data.progress.totalPoints,
+              level: data.progress.level,
+              levelName: data.progress.levelName,
+            },
+          }),
+        );
       }
     } catch (error: unknown) {
       setEvaluation({
@@ -142,7 +168,7 @@ export function AirportSimulatorAssistant() {
               Testing Mission
             </CardTitle>
             <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
-              Inspect the airport experience and report one defect at a time.
+              Inspect the {simulatorName} and report one defect at a time.
               Describe what you observed and why it is incorrect. The evaluator
               will not provide hints or reveal hidden defects.
             </p>
@@ -155,7 +181,9 @@ export function AirportSimulatorAssistant() {
                 className="text-slate-700 hover:bg-blue-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 onClick={() => {
                   setConfirmedDefects([]);
-                  window.localStorage.removeItem(STORAGE_KEY);
+                  window.localStorage.removeItem(
+                    `${storagePrefix}-confirmed-defects`,
+                  );
                 }}
               >
                 <RotateCcw />
@@ -222,7 +250,7 @@ export function AirportSimulatorAssistant() {
               Defect Evaluator
             </SheetTitle>
             <SheetDescription>
-              Submit one observed airport simulator defect. Questions, hints,
+              Submit one observed {simulatorName} defect. Questions, hints,
               unrelated topics, code, and links are rejected.
             </SheetDescription>
           </SheetHeader>
@@ -284,5 +312,25 @@ export function AirportSimulatorAssistant() {
         </SheetContent>
       </Sheet>
     </>
+  );
+}
+
+export function AirportSimulatorAssistant() {
+  return (
+    <SimulatorAssistant
+      endpoint="airport"
+      storagePrefix="airport-simulator"
+      simulatorName="airport simulator"
+    />
+  );
+}
+
+export function HospitalSimulatorAssistant() {
+  return (
+    <SimulatorAssistant
+      endpoint="hospital"
+      storagePrefix="hospital-simulator"
+      simulatorName="hospital portal"
+    />
   );
 }

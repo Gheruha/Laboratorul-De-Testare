@@ -24,6 +24,7 @@ export async function GET() {
     const [
       quizAttemptsResult,
       quizProgressResult,
+      simulatorProgressResult,
       quizzesResult,
       simulatorResult,
       scenariosResult,
@@ -42,13 +43,25 @@ export async function GET() {
         .from('user_quiz_progress')
         .select('completed_100')
         .eq('user_id', user.id),
-      serviceClient.from('quizzes').select('id, title, passing_score'),
+      serviceClient
+        .from('user_simulator_progress')
+        .select('completed')
+        .eq('user_id', user.id),
+      serviceClient
+        .from('quizzes')
+        .select('id, title, passing_score')
+        .eq('is_published', true),
       serviceClient
         .from('ai_simulator_submissions')
-        .select('id, scenario_id, report, verdict, matched_defect_id, created_at')
+        .select(
+          'id, scenario_id, report, verdict, matched_defect_id, created_at',
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false }),
-      serviceClient.from('ai_simulator_scenarios').select('id, title'),
+      serviceClient
+        .from('ai_simulator_scenarios')
+        .select('id, title')
+        .eq('is_published', true),
       serviceClient
         .from('user_gamification')
         .select('total_points, level, level_name')
@@ -69,6 +82,7 @@ export async function GET() {
     const firstError = [
       quizAttemptsResult.error,
       quizProgressResult.error,
+      simulatorProgressResult.error,
       quizzesResult.error,
       simulatorResult.error,
       scenariosResult.error,
@@ -82,12 +96,16 @@ export async function GET() {
       (quizzesResult.data ?? []).map(quiz => [quiz.id, quiz]),
     );
     const scenarios = new Map(
-      (scenariosResult.data ?? []).map(scenario => [scenario.id, scenario.title]),
+      (scenariosResult.data ?? []).map(scenario => [
+        scenario.id,
+        scenario.title,
+      ]),
     );
     const quizAttempts = quizAttemptsResult.data ?? [];
     const passedAttempts = quizAttempts.filter(
       attempt =>
-        attempt.score_percent >= (quizzes.get(attempt.quiz_id)?.passing_score ?? 70),
+        attempt.score_percent >=
+        (quizzes.get(attempt.quiz_id)?.passing_score ?? 70),
     ).length;
     const simulatorSubmissions = simulatorResult.data ?? [];
     const correctSubmissions = simulatorSubmissions.filter(
@@ -99,6 +117,12 @@ export async function GET() {
         .map(submission => submission.matched_defect_id)
         .filter(Boolean),
     ).size;
+    const perfectQuizzes = (quizProgressResult.data ?? []).filter(
+      progress => progress.completed_100,
+    ).length;
+    const completedSimulators = (simulatorProgressResult.data ?? []).filter(
+      progress => progress.completed,
+    ).length;
 
     const metadataName =
       user.user_metadata?.full_name ??
@@ -121,15 +145,17 @@ export async function GET() {
           currentStreak: streakResult.data?.current_streak ?? 0,
           longestStreak: streakResult.data?.longest_streak ?? 0,
           lastActivityDate: streakResult.data?.last_activity_date ?? null,
-          activeDates: (activityResult.data ?? []).map(day => day.activity_date),
+          activeDates: (activityResult.data ?? []).map(
+            day => day.activity_date,
+          ),
         },
         quizStats: {
           attempts: quizAttempts.length,
           passed: passedAttempts,
           successRate: percentage(passedAttempts, quizAttempts.length),
-          perfectQuizzes: (quizProgressResult.data ?? []).filter(
-            progress => progress.completed_100,
-          ).length,
+          perfectQuizzes,
+          totalQuizzes: quizzes.size,
+          completionRate: percentage(perfectQuizzes, quizzes.size),
         },
         simulatorStats: {
           submissions: simulatorSubmissions.length,
@@ -139,6 +165,9 @@ export async function GET() {
             simulatorSubmissions.length,
           ),
           solvedDefects,
+          completedSimulators,
+          totalSimulators: scenarios.size,
+          completionRate: percentage(completedSimulators, scenarios.size),
         },
         quizHistory: quizAttempts.slice(0, 20).map(attempt => ({
           id: attempt.id,

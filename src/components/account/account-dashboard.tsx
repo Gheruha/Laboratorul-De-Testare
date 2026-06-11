@@ -217,6 +217,29 @@ export function AccountDashboard() {
         </CardContent>
       </Card>
 
+      <Card className="shadow-none">
+        <CardHeader>
+          <CardTitle>Completion progress</CardTitle>
+          <CardDescription>
+            Fully completed quizzes and testing simulators.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-8 md:grid-cols-2">
+          <SuccessChart
+            label="Quizzes completed"
+            value={data.quizStats.completionRate}
+            detail={`${data.quizStats.perfectQuizzes} of ${data.quizStats.totalQuizzes}`}
+            color="var(--chart-3)"
+          />
+          <SuccessChart
+            label="Simulators completed"
+            value={data.simulatorStats.completionRate}
+            detail={`${data.simulatorStats.completedSimulators} of ${data.simulatorStats.totalSimulators}`}
+            color="var(--chart-4)"
+          />
+        </CardContent>
+      </Card>
+
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-semibold">Quiz history</h2>

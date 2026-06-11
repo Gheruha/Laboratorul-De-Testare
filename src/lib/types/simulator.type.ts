@@ -17,4 +17,15 @@ export interface SimulatorEvaluationResponse {
   verdict: SimulatorVerdict;
   feedback: string;
   matchedDefectId: string | null;
+  progress?: SimulatorProgress;
+}
+
+export interface SimulatorProgress {
+  solvedDefects: number;
+  totalDefects: number;
+  completed: boolean;
+  pointsAwarded: number;
+  totalPoints: number;
+  level: number;
+  levelName: string;
 }
