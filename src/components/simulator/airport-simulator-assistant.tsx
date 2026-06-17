@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import {
   Bot,
+  FilePenLine,
+  AlertTriangle,
   CheckCircle2,
   ClipboardList,
   Loader2,
@@ -32,6 +34,7 @@ import type { GamificationStatus } from '@/lib/types/gamification.type';
 
 const verdictLabels = {
   correct: 'Correct',
+  needs_revision: 'Almost there',
   incorrect: 'Incorrect',
   out_of_scope: 'Invalid submission',
 } as const;
@@ -277,8 +280,10 @@ export function SimulatorAssistant({
                   'gap-3 py-4 shadow-none',
                   evaluation.verdict === 'correct' &&
                     'border-emerald-500/40 bg-emerald-500/5',
-                  evaluation.verdict === 'incorrect' &&
+                  evaluation.verdict === 'needs_revision' &&
                     'border-amber-500/40 bg-amber-500/5',
+                  evaluation.verdict === 'incorrect' &&
+                    'border-orange-500/40 bg-orange-500/5',
                   evaluation.verdict === 'out_of_scope' &&
                     'border-destructive/40 bg-destructive/5',
                 )}
@@ -287,6 +292,8 @@ export function SimulatorAssistant({
                   <CardTitle className="flex items-center gap-2 text-base capitalize">
                     {evaluation.verdict === 'correct' ? (
                       <CheckCircle2 className="size-4 text-emerald-500" />
+                    ) : evaluation.verdict === 'needs_revision' ? (
+                      <AlertTriangle className="size-4 text-amber-500" />
                     ) : (
                       <XCircle className="size-4 text-destructive" />
                     )}
@@ -294,7 +301,30 @@ export function SimulatorAssistant({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 text-sm leading-6 text-muted-foreground">
-                  {evaluation.feedback}
+                  <p>{evaluation.feedback}</p>
+                  {evaluation.improvedReport && (
+                    <div className="mt-4 rounded-md border bg-background p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Suggested QA wording
+                      </p>
+                      <p className="mt-2 text-sm text-foreground">
+                        {evaluation.improvedReport}
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-3"
+                        onClick={() => {
+                          setReport(evaluation.improvedReport ?? '');
+                          setEvaluation(null);
+                        }}
+                      >
+                        <FilePenLine />
+                        Use rewrite
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

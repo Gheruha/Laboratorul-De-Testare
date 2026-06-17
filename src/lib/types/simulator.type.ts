@@ -1,4 +1,8 @@
-export type SimulatorVerdict = 'correct' | 'incorrect' | 'out_of_scope';
+export type SimulatorVerdict =
+  | 'correct'
+  | 'needs_revision'
+  | 'incorrect'
+  | 'out_of_scope';
 
 export interface SimulatorTask {
   id: string;
@@ -17,6 +21,7 @@ export interface SimulatorEvaluationResponse {
   verdict: SimulatorVerdict;
   feedback: string;
   matchedDefectId: string | null;
+  improvedReport?: string | null;
   progress?: SimulatorProgress;
 }
 

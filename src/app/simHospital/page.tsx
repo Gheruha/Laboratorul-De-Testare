@@ -1,7 +1,9 @@
 'use client';
 
 import { FormEvent, useMemo, useState } from 'react';
+import Image from 'next/image';
 import {
+  Activity,
   CalendarDays,
   HeartPulse,
   Hospital,
@@ -281,21 +283,50 @@ export default function HospitalSimulatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-emerald-50/50 pt-14 text-foreground dark:bg-zinc-950">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#ecfdf5_0%,#f8fafc_42%,#ffffff_100%)] pt-14 text-foreground dark:bg-[linear-gradient(180deg,#052e2b_0%,#09090b_44%,#09090b_100%)]">
       <WorkspaceHeader />
 
-      <section className="border-b border-emerald-200 bg-white px-5 py-10 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto max-w-7xl">
-          <Badge className="mb-4 bg-emerald-600 text-white">
-            PrivateMed Portal
-          </Badge>
-          <h1 className="max-w-3xl text-3xl font-bold md:text-5xl">
-            Welcome to PrivateMed Hospital
-          </h1>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Find specialists, explore departments, and manage your healthcare
-            appointments.
-          </p>
+      <section className="border-b border-emerald-200 bg-white/90 px-5 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/90">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-md border border-emerald-200 bg-emerald-950 shadow-sm dark:border-zinc-800">
+          <div className="relative min-h-[19rem] md:min-h-[23rem]">
+            <Image
+              src="/images/clinicSim-image.jpg"
+              alt="Private medical clinic reception and care environment"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1280px"
+              className="absolute inset-0 size-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/90 via-emerald-950/55 to-emerald-950/10" />
+            <div className="relative grid min-h-[19rem] gap-5 px-5 py-8 text-white md:min-h-[23rem] md:px-8 lg:grid-cols-[1fr_24rem] lg:items-end">
+              <div className="self-end">
+                <Badge className="mb-4 bg-emerald-600 text-white">
+                  PrivateMed Portal
+                </Badge>
+                <h1 className="max-w-3xl text-3xl font-bold md:text-5xl">
+                  Welcome to PrivateMed Hospital
+                </h1>
+                <p className="mt-4 max-w-2xl text-sm leading-6 text-emerald-50 md:text-base">
+                  Find specialists, explore departments, and manage your
+                  healthcare appointments.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3 rounded-md border border-white/20 bg-white/10 p-3 text-sm backdrop-blur">
+                <div>
+                  <p className="text-2xl font-bold">25</p>
+                  <p className="text-xs text-emerald-50">Doctors</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">15</p>
+                  <p className="text-xs text-emerald-50">Departments</p>
+                </div>
+                <div>
+                  <Activity className="mb-1 size-5 text-emerald-200" />
+                  <p className="text-xs text-emerald-50">Open today</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

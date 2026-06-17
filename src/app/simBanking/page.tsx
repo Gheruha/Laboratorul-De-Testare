@@ -1,11 +1,14 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  Bell,
   CreditCard,
   Landmark,
+  LockKeyhole,
   Search,
   Shield,
   Trash2,
@@ -91,10 +94,27 @@ const initialBeneficiaries = [
 
 export default function BankingSimulatorPage() {
   const [accounts, setAccounts] = useState(initialAccounts);
+  const [displayName, setDisplayName] = useState('there');
   const [transactionQuery, setTransactionQuery] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
   const [paymentMessage, setPaymentMessage] = useState('');
   const [beneficiaries, setBeneficiaries] = useState(initialBeneficiaries);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const response = await fetch('/api/account', { cache: 'no-store' });
+        const data = (await response.json()) as {
+          profile?: { displayName?: string };
+        };
+        const name = data.profile?.displayName?.trim();
+        if (!response.ok || !name) return;
+        setDisplayName(name.split(/\s+/)[0] ?? name);
+      } catch {
+        // Keep the neutral fallback if the profile cannot be loaded.
+      }
+    })();
+  }, []);
 
   // Intentional defect: the advertised category search checks merchants only.
   const filteredTransactions = useMemo(
@@ -143,27 +163,51 @@ export default function BankingSimulatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cyan-50/60 pt-14 text-foreground dark:bg-zinc-950">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#ecfeff_0%,#f8fafc_40%,#ffffff_100%)] pt-14 text-foreground dark:bg-[linear-gradient(180deg,#083344_0%,#09090b_44%,#09090b_100%)]">
       <WorkspaceHeader />
 
-      <section className="border-b border-cyan-200 bg-white px-5 py-9 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 md:flex-row md:items-end">
-          <div>
-            <Badge className="mb-4 bg-cyan-700 text-white">
-              Northstar Digital Banking
-            </Badge>
-            <h1 className="text-3xl font-bold md:text-5xl">
-              Good morning, Jordan
-            </h1>
-            <p className="mt-3 text-muted-foreground">
-              Manage accounts, transfers, cards, and upcoming payments.
-            </p>
-          </div>
-          <div className="rounded-md border border-cyan-200 bg-cyan-50 px-5 py-4 dark:border-zinc-700 dark:bg-zinc-950">
-            <p className="text-xs font-medium text-muted-foreground">
-              Total available balance
-            </p>
-            <p className="mt-1 text-3xl font-bold">$11,750.00</p>
+      <section className="border-b border-cyan-200 bg-white/90 px-5 py-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/90">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-md border border-cyan-200 bg-cyan-950 shadow-sm dark:border-zinc-800">
+          <div className="relative min-h-[18rem] md:min-h-[22rem]">
+            <Image
+              src="/images/bankSim-image.jpg"
+              alt="Digital banking dashboard and financial services"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1280px"
+              className="absolute inset-0 size-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-950/90 via-cyan-950/55 to-cyan-950/10" />
+            <div className="relative flex min-h-[18rem] flex-col justify-end gap-5 px-5 py-8 text-white md:min-h-[22rem] md:px-8 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <Badge className="mb-4 bg-cyan-700 text-white">
+                  Northstar Digital Banking
+                </Badge>
+                <h1 className="text-3xl font-bold md:text-5xl">
+                  Good morning, {displayName}
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-cyan-50 md:text-base">
+                  Manage accounts, transfers, cards, and upcoming payments.
+                </p>
+              </div>
+              <div className="grid gap-3 rounded-md border border-white/20 bg-white/10 p-4 backdrop-blur sm:grid-cols-3 lg:w-[27rem]">
+                <div className="sm:col-span-2">
+                  <p className="text-xs font-medium text-cyan-50">
+                    Total available balance
+                  </p>
+                  <p className="mt-1 text-3xl font-bold">$11,750.00</p>
+                </div>
+                <div className="space-y-2 text-xs text-cyan-50">
+                  <p className="flex items-center gap-2">
+                    <LockKeyhole className="size-4 text-cyan-200" />
+                    2FA enabled
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Bell className="size-4 text-cyan-200" />3 alerts
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

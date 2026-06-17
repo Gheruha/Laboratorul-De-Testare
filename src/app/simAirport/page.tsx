@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { Clock3, Plane, RadioTower, ShieldCheck } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -254,18 +256,67 @@ export default function AirportsSimulatorPage() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col justify-between bg-sky-50/60 pt-14 font-sans text-foreground dark:bg-slate-950 dark:text-slate-100">
+    <div className="flex min-h-screen w-full flex-col justify-between bg-[linear-gradient(180deg,#eef7ff_0%,#f8fafc_38%,#ffffff_100%)] pt-14 font-sans text-foreground dark:bg-[linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)] dark:text-slate-100">
       <WorkspaceHeader />
-      <div className="p-4 md:p-8 w-full flex-grow">
-        {/* Navigation Bar */}
-        <nav className="w-full border border-blue-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl mb-8 p-4 shadow-lg">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold tracking-tight text-blue-600 dark:text-blue-400">
-                ✈️ International Airport{' '}
-                <span className="text-slate-950 dark:text-white">AeroSim</span>
-              </span>
+      <div className="w-full flex-grow p-4 md:p-8">
+        <section className="mx-auto mb-6 max-w-7xl overflow-hidden rounded-md border border-blue-200 bg-blue-950 shadow-sm dark:border-slate-800">
+          <div className="relative min-h-[18rem] md:min-h-[22rem]">
+            <Image
+              src="/images/airportSim_image.jpg"
+              alt="Airport terminal and aircraft operations"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1280px"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-950/55 to-blue-950/10" />
+            <div className="relative flex min-h-[18rem] max-w-3xl flex-col justify-end px-5 py-8 text-white md:min-h-[22rem] md:px-8">
+              <Badge className="mb-4 w-fit bg-blue-500 text-white">
+                AeroSim Operations
+              </Badge>
+              <h1 className="text-3xl font-bold md:text-5xl">
+                International Airport Control Board
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-blue-100 md:text-base">
+                Monitor live departures, arrivals, service information, and
+                operational announcements across the airport.
+              </p>
             </div>
+          </div>
+        </section>
+
+        {/* Navigation Bar */}
+        <nav className="mb-8 w-full overflow-hidden rounded-md border border-blue-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="border-b border-blue-100 bg-blue-950 px-5 py-3 text-white dark:border-slate-800">
+            <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 md:flex-row md:items-center">
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 items-center justify-center rounded-sm bg-blue-500">
+                  <Plane className="size-5" />
+                </span>
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-blue-200">
+                    International Airport Operations
+                  </p>
+                  <p className="text-lg font-semibold">AeroSim Live Portal</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <span className="rounded-sm bg-white/10 px-3 py-2">
+                  <RadioTower className="mb-1 size-4 text-blue-200" />
+                  ATC normal
+                </span>
+                <span className="rounded-sm bg-white/10 px-3 py-2">
+                  <Clock3 className="mb-1 size-4 text-blue-200" />
+                  UTC +03
+                </span>
+                <span className="rounded-sm bg-white/10 px-3 py-2">
+                  <ShieldCheck className="mb-1 size-4 text-blue-200" />
+                  Security open
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 p-4 md:flex-row">
             <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-400">
               <button
                 onClick={() => setActiveTab('departures')}
